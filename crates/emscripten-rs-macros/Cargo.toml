@@ -1,10 +1,10 @@
 [package]
 name = "emscripten-rs-macros"
-version = "0.1.0"
+version = "0.2.0"
 authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]
-homepage = "https://https://github.com/sutajo/emscripten-rs-sys"
+homepage = "https://github.com/sutajo/emscripten-rs-sys"
 description = "Utility macros for emscripten_rs_sys"
 license = "MIT"
 

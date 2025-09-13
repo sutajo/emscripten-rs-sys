@@ -323,7 +323,7 @@ unsafe extern "C" {
     );
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct __em_asm_sig {
     pub _address: u8,
 }
@@ -433,12 +433,12 @@ const _: () = {
         [::std::mem::align_of::<__em_asm_sig>() - 1usize];
 };
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct __em_asm_type_tuple {
     pub _address: u8,
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct __em_asm_sig_builder {
     pub _address: u8,
 }
@@ -788,7 +788,7 @@ unsafe extern "C" {
     ) -> em_promise_t;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct em_settled_result_t {
     pub result: em_promise_result_t,
     pub value: *mut ::std::os::raw::c_void,
@@ -1520,7 +1520,7 @@ unsafe extern "C" {
     ) -> *mut ::std::os::raw::c_void;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct emscripten_fetch_attr_t {
     pub requestMethod: [::std::os::raw::c_char; 32usize],
     pub userData: *mut ::std::os::raw::c_void,
@@ -1588,7 +1588,7 @@ impl Default for emscripten_fetch_attr_t {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct emscripten_fetch_t {
     pub id: u32,
     pub userData: *mut ::std::os::raw::c_void,
@@ -1680,7 +1680,7 @@ unsafe extern "C" {
     );
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct asyncify_data_s {
     pub stack_ptr: *mut ::std::os::raw::c_void,
     #[doc = " Current position in the Asyncify stack (*not* the C stack)"]
@@ -1710,7 +1710,7 @@ impl Default for asyncify_data_s {
 }
 pub type asyncify_data_t = asyncify_data_s;
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct emscripten_fiber_s {
     pub stack_base: *mut ::std::os::raw::c_void,
     #[doc = " Where the C stack starts (NOTE: grows down)."]
@@ -1812,7 +1812,7 @@ pub type EMSCRIPTEN_WEBGL_CONTEXT_HANDLE = usize;
 pub type EMSCRIPTEN_WEBGL_CONTEXT_PROXY_MODE = ::std::os::raw::c_int;
 pub type EM_WEBGL_POWER_PREFERENCE = ::std::os::raw::c_int;
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenWebGLContextAttributes {
     pub alpha: bool,
     pub depth: bool,
@@ -2103,7 +2103,7 @@ unsafe extern "C" {
     );
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenKeyboardEvent {
     pub timestamp: f64,
     pub location: ::std::os::raw::c_uint,
@@ -2190,7 +2190,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenMouseEvent {
     pub timestamp: f64,
     pub screenX: ::std::os::raw::c_int,
@@ -2346,7 +2346,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenWheelEvent {
     pub mouse: EmscriptenMouseEvent,
     pub deltaX: f64,
@@ -2386,7 +2386,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenUiEvent {
     pub detail: ::std::os::raw::c_int,
     pub documentBodyClientWidth: ::std::os::raw::c_int,
@@ -2447,7 +2447,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenFocusEvent {
     pub nodeName: [::std::os::raw::c_char; 128usize],
     pub id: [::std::os::raw::c_char; 128usize],
@@ -2514,7 +2514,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenDeviceOrientationEvent {
     pub alpha: f64,
     pub beta: f64,
@@ -2557,7 +2557,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenDeviceMotionEvent {
     pub accelerationX: f64,
     pub accelerationY: f64,
@@ -2624,7 +2624,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenOrientationChangeEvent {
     pub orientationIndex: ::std::os::raw::c_int,
     pub orientationAngle: ::std::os::raw::c_int,
@@ -2669,7 +2669,7 @@ unsafe extern "C" {
     pub fn emscripten_unlock_orientation() -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenFullscreenChangeEvent {
     pub isFullscreen: bool,
     pub fullscreenEnabled: bool,
@@ -2741,7 +2741,7 @@ pub type em_canvasresized_callback_func = ::std::option::Option<
     ) -> bool,
 >;
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenFullscreenStrategy {
     pub scaleMode: ::std::os::raw::c_int,
     pub canvasResolutionScaleMode: ::std::os::raw::c_int,
@@ -2809,7 +2809,7 @@ unsafe extern "C" {
     pub fn emscripten_exit_soft_fullscreen() -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenPointerlockChangeEvent {
     pub isActive: bool,
     pub nodeName: [::std::os::raw::c_char; 128usize],
@@ -2884,7 +2884,7 @@ unsafe extern "C" {
     pub fn emscripten_exit_pointerlock() -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenVisibilityChangeEvent {
     pub hidden: bool,
     pub visibilityState: ::std::os::raw::c_int,
@@ -2921,7 +2921,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenTouchPoint {
     pub identifier: ::std::os::raw::c_int,
     pub screenX: ::std::os::raw::c_int,
@@ -2969,7 +2969,7 @@ const _: () = {
         [::std::mem::offset_of!(EmscriptenTouchPoint, canvasY) - 44usize];
 };
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenTouchEvent {
     pub timestamp: f64,
     pub numTouches: ::std::os::raw::c_int,
@@ -3042,7 +3042,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenGamepadEvent {
     pub timestamp: f64,
     pub numAxes: ::std::os::raw::c_int,
@@ -3126,7 +3126,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenBatteryEvent {
     pub chargingTime: f64,
     pub dischargingTime: f64,
@@ -3603,7 +3603,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenWebSocketOpenEvent {
     pub socket: ::std::os::raw::c_int,
 }
@@ -3632,7 +3632,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenWebSocketMessageEvent {
     pub socket: ::std::os::raw::c_int,
     pub data: *mut u8,
@@ -3679,7 +3679,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct EmscriptenWebSocketErrorEvent {
     pub socket: ::std::os::raw::c_int,
 }
@@ -3708,7 +3708,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenWebSocketCloseEvent {
     pub socket: ::std::os::raw::c_int,
     pub wasClean: bool,
@@ -3755,7 +3755,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenWebSocketCreateAttributes {
     pub url: *const ::std::os::raw::c_char,
     pub protocols: *const ::std::os::raw::c_char,
@@ -4267,7 +4267,7 @@ unsafe extern "C" {
 }
 pub type EMSCRIPTEN_WEBAUDIO_T = ::std::os::raw::c_int;
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenWebAudioCreateAttributes {
     pub latencyHint: *const ::std::os::raw::c_char,
     pub sampleRate: u32,
@@ -4344,7 +4344,7 @@ unsafe extern "C" {
 }
 pub type WEBAUDIO_PARAM_AUTOMATION_RATE = ::std::os::raw::c_int;
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct WebAudioParamDescriptor {
     pub defaultValue: f32,
     pub minValue: f32,
@@ -4366,7 +4366,7 @@ const _: () = {
         [::std::mem::offset_of!(WebAudioParamDescriptor, automationRate) - 12usize];
 };
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct WebAudioWorkletProcessorCreateOptions {
     pub name: *const ::std::os::raw::c_char,
     pub numAudioParams: ::std::os::raw::c_int,
@@ -4418,7 +4418,7 @@ unsafe extern "C" {
 }
 pub type EMSCRIPTEN_AUDIO_WORKLET_NODE_T = ::std::os::raw::c_int;
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct AudioSampleFrame {
     pub numberOfChannels: ::std::os::raw::c_int,
     pub samplesPerChannel: ::std::os::raw::c_int,
@@ -4445,7 +4445,7 @@ impl Default for AudioSampleFrame {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct AudioParamFrame {
     pub length: ::std::os::raw::c_int,
     pub data: *mut f32,
@@ -4480,7 +4480,7 @@ pub type EmscriptenWorkletNodeProcessCallback = ::std::option::Option<
     ) -> bool,
 >;
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct EmscriptenAudioWorkletNodeCreateOptions {
     pub numberOfInputs: ::std::os::raw::c_int,
     pub numberOfOutputs: ::std::os::raw::c_int,

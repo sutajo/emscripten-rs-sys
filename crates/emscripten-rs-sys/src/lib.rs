@@ -1,13 +1,12 @@
 #![cfg_attr(
-    feature = "em_js",
-    feature(asm_experimental_arch, macro_metavar_expr_concat)
+    all(test),
+    feature(portable_simd, asm_experimental_arch, used_with_arg)
 )]
 #![allow(clippy::approx_constant)]
 
-pub mod binding;
+mod binding;
 pub use binding::*;
 
-#[cfg(feature = "em_js")]
 pub mod em_js;
 
 #[cfg(test)]

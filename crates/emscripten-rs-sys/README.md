@@ -1,8 +1,8 @@
 # emscripten-rs-sys
 
 [![Crates.io](https://img.shields.io/crates/v/emscripten-rs-sys.svg)](https://crates.io/crates/emscripten-rs-sys)
-[![Docs.rs](https://docs.rs/emscripten-rs-sys/badge.svg)](https://docs.rs/emscripten-rs-sys)
-[![License](https://img.shields.io/crates/l/emscripten-rs-sys.svg)](./LICENSE)
+[![Docs.rs](https://img.shields.io/docsrs/emscripten_rs_sys)](https://img.shields.io/docsrs/emscripten_rs_sys)
+![License](https://img.shields.io/crates/l/emscripten-rs-sys.svg)
 
 Low-level Rust FFI bindings to the [Emscripten](https://emscripten.org/) C API, generated using [bindgen](https://github.com/rust-lang/rust-bindgen).
 
@@ -37,14 +37,17 @@ Ways to set linker settings:
 ## Example
 
 ```rust
-em_js!(fn compute_sum(n: c_int) -> c_int, r#"
-    let sum = 0;
-    for(let i=1; i<n; i++)
+js! {
+    fn compute_sum(n: c_int) -> c_int,
     {
-        sum += i;
+        let sum = 0;
+        for(let i=1; i<n; i++)
+        {
+            sum += i;
+        }
+        return sum;
     }
-    return sum;
-"#);
+}
 
 fn test_sum() {
     assert_eq!(unsafe { compute_sum(100) }, 4950)

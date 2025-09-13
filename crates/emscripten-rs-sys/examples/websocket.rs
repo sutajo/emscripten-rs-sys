@@ -1,8 +1,3 @@
-#![cfg_attr(
-    feature = "em_js",
-    feature(asm_experimental_arch, macro_metavar_expr_concat)
-)]
-
 use emscripten_rs_sys::*;
 use std::{ffi::CStr, ptr::null_mut};
 

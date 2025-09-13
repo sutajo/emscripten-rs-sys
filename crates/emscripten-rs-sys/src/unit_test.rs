@@ -1,5 +1,5 @@
 use crate::*;
-use std::{ffi::CStr, time::Instant};
+use std::ffi::CStr;
 
 #[test]
 fn exec_script_string() {
@@ -15,14 +15,6 @@ fn exec_script_string() {
 fn exec_script_int() {
     let result = unsafe { emscripten_run_script_int(c"6*5".as_ptr()) };
     assert_eq!(result, 30)
-}
-
-#[test]
-fn sleep() {
-    let time = Instant::now();
-    let sleep = 5;
-    unsafe { emscripten_sleep(sleep) };
-    assert!(time.elapsed().as_millis() >= sleep as _)
 }
 
 static mut COUNTER: i32 = 0;

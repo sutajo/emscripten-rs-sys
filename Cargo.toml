@@ -28,3 +28,6 @@ libc = "0.2.175"
 
 [package.metadata.docs.rs]
 default-target = "wasm32-unknown-emscripten"
+
+[profile.release]
+debug = true

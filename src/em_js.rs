@@ -61,6 +61,7 @@ macro_rules! em_js {
         }
 
         #[link(wasm_import_module = "env")]
+        #[allow(dead_code)]
         unsafe extern "C" {
             pub unsafe fn $name($( $arg_name : $arg_ty ),*) -> $ret;
         }
@@ -100,7 +101,7 @@ mod tests {
         }
     }
 
-    em_js!(fn heavy(n: c_int) -> c_int, r#"
+    em_js!(fn sum(n: c_int) -> c_int, r#"
         let sum = 0;
         for(let i=1; i<n; i++)
         {
@@ -110,7 +111,32 @@ mod tests {
     "#);
 
     #[test]
-    fn test_heavy() {
-        assert_eq!(unsafe { heavy(100) }, 4950)
+    fn test_sum() {
+        assert_eq!(unsafe { sum(100) }, 4950);
+    }
+
+    use std::simd::i32x4;
+    use std::simd::num::SimdInt;
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn callback_rs(param: i32) -> i32
+    {
+        i32x4::splat(param).reduce_sum()
+    }
+
+    #[link(kind = "link-arg", name="-sEXPORTED_FUNCTIONS=['_main', '_callback_rs']", modifiers="+verbatim")]
+    unsafe extern "C" {}
+
+    em_js!(fn second_js(param: i32) -> i32, r#"
+        return _callback_rs(param);
+    "#);
+
+    em_js!(fn first_js(param: i32) -> i32, r#"
+        return second_js(param)
+    "#);
+
+    #[test]
+    fn test_transitiveness() {
+        assert_eq!(unsafe { first_js(5) }, 20)
     }
 }

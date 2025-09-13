@@ -1,7 +1,8 @@
 #![cfg_attr(
     feature = "em_js",
-    feature(asm_experimental_arch, macro_metavar_expr_concat)
+    feature(asm_experimental_arch, macro_metavar_expr_concat, link_arg_attribute)
 )]
+#![cfg_attr(all(feature = "em_js", test), feature(portable_simd))]
 #![allow(clippy::approx_constant)]
 
 pub mod binding;

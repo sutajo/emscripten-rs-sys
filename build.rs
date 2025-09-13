@@ -71,7 +71,7 @@ fn main() {
             .write_to_file("src/binding.rs")
             .expect("Could not write binding to file");
     
-        println!("cargo::rustc-link-arg-examples=-sEXPORTED_RUNTIME_METHODS=['webSockets']");
+        println!("cargo:rustc-link-arg-examples=-sEXPORTED_RUNTIME_METHODS=['webSockets']");
     }
     else
     {

@@ -119,6 +119,7 @@ mod tests {
     use std::simd::num::SimdInt;
 
     #[unsafe(no_mangle)]
+    #[target_feature(enable = "simd128")]
     pub extern "C" fn hadd_rs(v1: i32, v2: i32, v3: i32, v4: i32) -> i32
     {
         i32x4::from_array([v1,v2,v3,v4]).reduce_sum()

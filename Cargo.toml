@@ -1,0 +1,27 @@
+[package]
+name = "emscripten-rs-sys"
+version = "0.1.0"
+authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
+edition = "2024"
+keywords = [ "emscripten", "ffi" ]
+description = "Bindgen-generated bindings to all public emscripten functions"
+
+[features]
+default = ["em_js"]
+em_js = []
+
+[dependencies]
+emscripten_rs_macros = { path = "emscripten-rs-macros" }
+
+[build-dependencies]
+bindgen = "0.72.1"
+which = "8.0.0"
+
+[[example]]
+name = "websocket"
+
+[dev-dependencies]
+libc = "0.2.175"
+
+[package.metadata.docs.rs]
+default-target = "wasm32-unknown-emscripten"

@@ -1,0 +1,11 @@
+[build]
+target = "wasm32-unknown-emscripten"
+
+[target.'cfg(target_family = "wasm")']
+runner = "node"
+rustflags = [
+    "-C", "link-arg=-sENVIRONMENT=node",
+    "-C", "link-arg=-sASYNCIFY=1",
+    "-C", "link-arg=-sASYNCIFY_STACK_SIZE=16384",
+    "-C", "link-arg=-sEXIT_RUNTIME=1"
+]

@@ -1,6 +1,6 @@
 #![cfg_attr(
     feature = "em_js",
-    feature(asm_experimental_arch, macro_metavar_expr_concat, link_arg_attribute)
+    feature(asm_experimental_arch, macro_metavar_expr_concat)
 )]
 #![cfg_attr(all(feature = "em_js", test), feature(portable_simd))]
 #![allow(clippy::approx_constant)]

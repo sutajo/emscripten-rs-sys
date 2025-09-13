@@ -36,7 +36,7 @@ macro_rules! em_js {
                     global_asm!(
                         concat!(".type	", $exported_symbol, ",@object"),
                         concat!(".globl ", $exported_symbol),
-                        concat!(".section .data.", $exported_symbol, ",\"R\",@"),
+                        concat!(".section .em_js.", $exported_symbol, ",\"R\",@"),
                         concat!(".p2align 1, 0x0"),
                         concat!($exported_symbol, ":"),
                         concat!(r#".asciz ""#, $code, r#"""#),

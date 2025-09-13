@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/emscripten-rs-sys.svg)](https://crates.io/crates/emscripten-rs-sys)
 [![Docs.rs](https://img.shields.io/docsrs/emscripten_rs_sys)](https://img.shields.io/docsrs/emscripten_rs_sys)
-[![License](https://img.shields.io/crates/l/emscripten-rs-sys.svg)](./LICENSE)
+![License](https://img.shields.io/crates/l/emscripten-rs-sys.svg)
 
 Low-level Rust FFI bindings to the [Emscripten](https://emscripten.org/) C API, generated using [bindgen](https://github.com/rust-lang/rust-bindgen).
 

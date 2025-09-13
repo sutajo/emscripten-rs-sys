@@ -1,6 +1,6 @@
 [package]
 name = "emscripten_rs_sys"
-version = "0.1.1"
+version = "0.1.2"
 authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]

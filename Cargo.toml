@@ -5,6 +5,9 @@ authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]
 description = "Bindgen-generated bindings to all public emscripten functions"
+license-file = "LICENSE"
+readme = "README.md"
+homepage = "https://github.com/sutajo/emscripten-rs-sys"
 
 [features]
 default = ["em_js"]

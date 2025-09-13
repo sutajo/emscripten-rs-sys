@@ -48,17 +48,16 @@ macro_rules! em_js {
                 };
             }
 
-            unsafe extern "C" {
-                unsafe static mut ${concat(__em_js_ref_, $name)} :u8;
-                unsafe static mut ${concat(__em_js__, $name)} :u8;
-            }
-
-            //const PARAM_LEN:usize = len_in_bytes!($body);
-            //const BODY_LEN:usize = len_in_bytes!($body);
-
             declare_global!(stringify!(${concat(__em_js_ref_, $name)}), "", 0, 1);
-            declare_global!(stringify!(${concat(__em_js__, $name)}),
-                concat!("(", stringify!($($arg_name),*) ,r#")<::>\n{{"#, get_processed_script!($body), r#"}}"#), len_params!($($arg_name),*), len_in_bytes!($body));
+            declare_global!(
+                stringify!(${concat(__em_js__, $name)}),
+                concat!("(", 
+                    stringify!($($arg_name),*) ,r#")<::>\n{{"#,
+                    get_processed_script!($body), r#"}}"#
+                ),
+                len_params!($($arg_name),*),
+                len_in_bytes!($body)
+            );
         }
 
         #[link(wasm_import_module = "env")]

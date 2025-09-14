@@ -14,7 +14,7 @@ default = ["em_js"]
 em_js = []
 
 [dependencies]
-emscripten-rs-macros = { version = "0.1.0" }
+emscripten-rs-macros = { version = "0.1.1" }
 
 [build-dependencies]
 bindgen = "0.72.1"

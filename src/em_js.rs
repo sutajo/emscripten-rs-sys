@@ -108,4 +108,13 @@ mod tests {
     fn test_transitiveness() {
         assert_eq!(unsafe { first_js(5) }, 20);
     }
+
+    em_js!(fn multiple_params(a: i32, b: i32, c: i32) -> i32, r#"
+        return a+b*c;
+    "#);
+
+    #[test]
+    fn test_multiple_params() {
+        assert_eq!(unsafe { multiple_params(3,4,5) }, 23);
+    }
 }

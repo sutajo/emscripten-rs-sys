@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! declare_global_js_fn {
     // Pattern: function signature, name, string
@@ -6,8 +5,8 @@ macro_rules! declare_global_js_fn {
         #[used]
         #[unsafe(no_mangle)]
         #[allow(non_upper_case_globals)]
-        pub static $exported_symbol : [u8; $size_code] = $code;
-        
+        pub static $exported_symbol: [u8; $size_code] = $code;
+
         // Inline assembly for WASM is only supported on nightly at the time of writing.
         // Make sure to export the symbol for Emscripten
         std::arch::global_asm!(concat!(".globl ", stringify!($exported_symbol)));
@@ -91,9 +90,8 @@ mod tests {
 
     #[unsafe(no_mangle)]
     #[target_feature(enable = "simd128")]
-    pub extern "C" fn hadd_rs(v1: i32, v2: i32, v3: i32, v4: i32) -> i32
-    {
-        i32x4::from_array([v1,v2,v3,v4]).reduce_sum()
+    pub extern "C" fn hadd_rs(v1: i32, v2: i32, v3: i32, v4: i32) -> i32 {
+        i32x4::from_array([v1, v2, v3, v4]).reduce_sum()
     }
 
     em_js!(fn second_js(param: i32) -> i32, r#"
@@ -115,6 +113,6 @@ mod tests {
 
     #[test]
     fn test_multiple_params() {
-        assert_eq!(unsafe { multiple_params(3,4,5) }, 23);
+        assert_eq!(unsafe { multiple_params(3, 4, 5) }, 23);
     }
 }

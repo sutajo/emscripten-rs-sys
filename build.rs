@@ -3,11 +3,10 @@ use which::which;
 
 fn main() {
     println!("cargo:rerun-if-env-changed=PATH");
-    if let Ok(compiler) = which("emcc") 
-    {
+    if let Ok(compiler) = which("emcc") {
         let sysroot = compiler.parent().unwrap().join("cache").join("sysroot");
         let excluded_headers = ["wire.h"];
-    
+
         let headers = fs::read_dir(sysroot.join("include").join("emscripten"))
             .expect("include directory not found")
             .filter_map(|e| e.ok())
@@ -34,7 +33,7 @@ fn main() {
                     None
                 }
             });
-    
+
         bindgen::Builder::default()
             .headers(headers)
             .clang_arg("-x")
@@ -68,11 +67,9 @@ fn main() {
             .expect("Binding generation failed")
             .write_to_file("src/binding.rs")
             .expect("Could not write binding to file");
-    
+
         println!("cargo:rustc-link-arg-examples=-sEXPORTED_RUNTIME_METHODS=['webSockets']");
-    }
-    else
-    {
+    } else {
         println!("cargo:warning=emcc not found, using prebuilt bindings");
     }
 }

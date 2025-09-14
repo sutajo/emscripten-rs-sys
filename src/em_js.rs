@@ -23,7 +23,7 @@ macro_rules! export_bytes_globally {
 #[macro_export]
 macro_rules! em_js {
     (
-        fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),* ) -> $ret:ty, $body:expr
+        fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),* ) $(-> $ret:ty)?, $body:expr
     ) => {
         $crate::export_bytes_globally!(${concat(__em_js_ref_, $name)}, *b"\0", 1);
         $crate::export_bytes_globally!(
@@ -35,7 +35,7 @@ macro_rules! em_js {
         #[link(wasm_import_module = "env")]
         #[allow(dead_code)]
         unsafe extern "C" {
-            pub unsafe fn $name($( $arg_name : $arg_ty ),*) -> $ret;
+            pub unsafe fn $name($( $arg_name : $arg_ty ),*) $(-> $ret)?;
         }
     };
 }
@@ -61,7 +61,7 @@ mod tests {
         }
     }
 
-    em_js!(fn string_param(url: *const c_char) -> (), r#"
+    em_js!(fn string_param(url: *const c_char), r#"
         url = UTF8ToString(Number(url));
         out(`Query url is: ${url}`);
     "#);

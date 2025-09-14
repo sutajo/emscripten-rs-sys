@@ -1,34 +1,21 @@
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{ToTokens, quote};
 use syn::{punctuated::Punctuated, *};
-
-fn postprocess_script(script: String) -> (String, usize) {
-    let original_len = script.len();
-
-    let trimmed = script
-        .lines()
-        .map(str::trim)
-        .collect::<String>();
-
-    let escaped =
-        trimmed
-        .chars()
-        .map(|c| match c {
-            '"' => r#"\""#.into(),
-            '{' => "{{".into(),
-            '}' => "}}".into(),
-            _ => c.to_string()
-        })
-        .collect::<String>();
-
-
-    (escaped, original_len)
-}
 
 #[proc_macro]
 pub fn len_in_bytes(input: TokenStream) -> TokenStream {
-    let lit = parse_macro_input!(input as LitStr);
-    let len = postprocess_script(lit.value()).1;
+    let params = parse_macro_input!(input as ExprTuple);
+
+    let args = params.elems[0].to_token_stream().to_string();
+    let script = parse2::<LitStr>(params.elems[1].to_token_stream()).unwrap();
+
+    let mut len = script.value().as_bytes().len() + 1;
+
+    // Additional bytes from decoration
+    len += 6;
+
+    // Arguments length
+    len += args.len();
 
     // Produce a compile-time usize literal
     let expanded = quote! { #len };
@@ -37,12 +24,22 @@ pub fn len_in_bytes(input: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn get_processed_script(input: TokenStream) -> TokenStream {
-    let lit = parse_macro_input!(input as LitStr);
-    let final_script = postprocess_script(lit.value()).0;
+    let params = parse_macro_input!(input as ExprTuple);
 
-    // Produce a compile-time string literal
-    let expanded = quote! { #final_script };
-    TokenStream::from(expanded)
+    let args = params.elems[0].to_token_stream().to_string();
+    let script = parse2::<LitStr>(params.elems[1].to_token_stream()).unwrap().value();
+
+    let decorated_script = format!("{args}<::>{{{script}}}");
+    let bytes = decorated_script.as_bytes();
+
+    // Turn each byte into a literal token
+    let tokens = bytes.iter().map(|b| quote! { #b });
+
+    let output = quote! {
+        [ #( #tokens ),*, b'\0' ]
+    };
+
+    output.into()
 }
 
 #[proc_macro]

@@ -1,20 +1,17 @@
-// This should have been much less painful to implement.
-// The problem is that using the declarations below, rustc should emit
-// external global definitions in the LLVM IR, but instead it emits internal ones if the
-// static variables are defined and used within the same compilation unit, which prevents
-// Emscripten from picking up the symbols at link time.
-// For this reason, I had to resort to inline assembly to properly export the
-// symbols for Emscripten.
-//
-// Inline assembly for WASM is only supported on nightly at the time of writing.
-//
-// #[used]
-// #[unsafe(no_mangle)]
-// pub static mut __em_js_ref_FUN: usize = 0;
-//
-// #[used]
-// #[unsafe(no_mangle)]
-// pub static mut __em_js__FUN: [u8; _] = *b"(args)<::>{ <script> }\0";
+
+#[macro_export]
+macro_rules! declare_global_js_fn {
+    // Pattern: function signature, name, string
+    ($exported_symbol:ident, $code:expr, $size_code:expr) => {
+        #[used]
+        #[unsafe(no_mangle)]
+        pub static $exported_symbol : [u8; $size_code] = $code;
+        
+        // Inline assembly for WASM is only supported on nightly at the time of writing.
+        // Make sure to export the symbol for Emscripten
+        std::arch::global_asm!(concat!(".globl ", stringify!($exported_symbol)));
+    };
+}
 
 /// Define JS functions in Rust.
 ///
@@ -26,33 +23,11 @@ macro_rules! em_js {
     (
         fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),* ) -> $ret:ty, $body:expr
     ) => {
-        macro_rules! declare_global {
-            // Pattern: function signature, name, string
-            ($exported_symbol:expr, $code:expr, $size_params:expr, $size_body:expr) => {
-                std::arch::global_asm!(
-                    concat!(".type	", $exported_symbol, ",@object"),
-                    concat!(".globl ", $exported_symbol),
-                    concat!(".section .em_js.", $exported_symbol, ",\"R\",@"),
-                    concat!(".p2align 1, 0x0"),
-                    concat!($exported_symbol, ":"),
-                    concat!(r#".asciz ""#, $code, r#"""#),
-                    // Need to calculate the final size
-                    // ( Len of params ) + <::> + {} + \n + len of body + terminating zero
-                    concat!(".size ", $exported_symbol, ", ", "2+", $size_params, "+4+2+2+", $size_body, "+1"),
-                    concat!(".no_dead_strip ", $exported_symbol)
-                );
-            };
-        }
-
-        declare_global!(stringify!(${concat(__em_js_ref_, $name)}), "", 0, 1);
-        declare_global!(
-            stringify!(${concat(__em_js__, $name)}),
-            concat!("(", 
-                stringify!($($arg_name),*) ,r#")<::>\n{{"#,
-                emscripten_rs_macros::get_processed_script!($body), r#"}}"#
-            ),
-            emscripten_rs_macros::len_params!($($arg_name),*),
-            emscripten_rs_macros::len_in_bytes!($body)
+        declare_global_js_fn!(${concat(__em_js_ref_, $name)}, *b"\0", 1);
+        declare_global_js_fn!(
+            ${concat(__em_js__, $name)},
+            emscripten_rs_macros::get_processed_script!(([$($arg_name),*], $body)),
+            emscripten_rs_macros::len_in_bytes!((($($arg_name),*), $body))
         );
 
         #[link(wasm_import_module = "env")]

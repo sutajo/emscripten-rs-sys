@@ -9,7 +9,7 @@ pub fn len_in_bytes(input: TokenStream) -> TokenStream {
     let args = params.elems[0].to_token_stream().to_string();
     let script = parse2::<LitStr>(params.elems[1].to_token_stream()).unwrap();
 
-    let mut len = script.value().as_bytes().len() + 1;
+    let mut len = script.value().len() + 1;
 
     // Additional bytes from decoration
     len += 6;

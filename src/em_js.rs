@@ -5,6 +5,7 @@ macro_rules! declare_global_js_fn {
     ($exported_symbol:ident, $code:expr, $size_code:expr) => {
         #[used]
         #[unsafe(no_mangle)]
+        #[allow(non_upper_case_globals)]
         pub static $exported_symbol : [u8; $size_code] = $code;
         
         // Inline assembly for WASM is only supported on nightly at the time of writing.

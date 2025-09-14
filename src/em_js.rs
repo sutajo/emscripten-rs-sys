@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! declare_global_js_fn {
+macro_rules! export_bytes_globally {
     // Pattern: function signature, name, string
     ($exported_symbol:ident, $code:expr, $size_code:expr) => {
         #[used]
@@ -7,8 +7,10 @@ macro_rules! declare_global_js_fn {
         #[allow(non_upper_case_globals)]
         pub static $exported_symbol: [u8; $size_code] = $code;
 
+        // For Emscripten to see these symbols, they need to be true global variables.
+        // Despite using pub static, in the LLVM IR the variable is defined with internal const.
+        // Thankfully this can be overriden with inline ASM.
         // Inline assembly for WASM is only supported on nightly at the time of writing.
-        // Make sure to export the symbol for Emscripten
         std::arch::global_asm!(concat!(".globl ", stringify!($exported_symbol)));
     };
 }
@@ -23,8 +25,8 @@ macro_rules! em_js {
     (
         fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),* ) -> $ret:ty, $body:expr
     ) => {
-        $crate::declare_global_js_fn!(${concat(__em_js_ref_, $name)}, *b"\0", 1);
-        $crate::declare_global_js_fn!(
+        $crate::export_bytes_globally!(${concat(__em_js_ref_, $name)}, *b"\0", 1);
+        $crate::export_bytes_globally!(
             ${concat(__em_js__, $name)},
             emscripten_rs_macros::get_decorated_script!(([$($arg_name),*], $body)),
             emscripten_rs_macros::len_in_bytes!((($($arg_name),*), $body))

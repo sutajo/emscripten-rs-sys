@@ -26,39 +26,34 @@ macro_rules! em_js {
     (
         fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),* ) -> $ret:ty, $body:expr
     ) => {
-        mod ${concat($name, symbols)} {
-            use std::{arch::global_asm};
-            use emscripten_rs_macros::*;
-
-            macro_rules! declare_global {
-                // Pattern: function signature, name, string
-                ($exported_symbol:expr, $code:expr, $size_params:expr, $size_body:expr) => {
-                    global_asm!(
-                        concat!(".type	", $exported_symbol, ",@object"),
-                        concat!(".globl ", $exported_symbol),
-                        concat!(".section .em_js.", $exported_symbol, ",\"R\",@"),
-                        concat!(".p2align 1, 0x0"),
-                        concat!($exported_symbol, ":"),
-                        concat!(r#".asciz ""#, $code, r#"""#),
-                        // Need to calculate the final size
-                        // ( Len of params ) + <::> + {} + \n + len of body + terminating zero
-                        concat!(".size ", $exported_symbol, ", ", "2+", $size_params, "+4+2+2+", $size_body, "+1"),
-                        concat!(".no_dead_strip ", $exported_symbol)
-                    );
-                };
-            }
-
-            declare_global!(stringify!(${concat(__em_js_ref_, $name)}), "", 0, 1);
-            declare_global!(
-                stringify!(${concat(__em_js__, $name)}),
-                concat!("(", 
-                    stringify!($($arg_name),*) ,r#")<::>\n{{"#,
-                    get_processed_script!($body), r#"}}"#
-                ),
-                len_params!($($arg_name),*),
-                len_in_bytes!($body)
-            );
+        macro_rules! declare_global {
+            // Pattern: function signature, name, string
+            ($exported_symbol:expr, $code:expr, $size_params:expr, $size_body:expr) => {
+                std::arch::global_asm!(
+                    concat!(".type	", $exported_symbol, ",@object"),
+                    concat!(".globl ", $exported_symbol),
+                    concat!(".section .em_js.", $exported_symbol, ",\"R\",@"),
+                    concat!(".p2align 1, 0x0"),
+                    concat!($exported_symbol, ":"),
+                    concat!(r#".asciz ""#, $code, r#"""#),
+                    // Need to calculate the final size
+                    // ( Len of params ) + <::> + {} + \n + len of body + terminating zero
+                    concat!(".size ", $exported_symbol, ", ", "2+", $size_params, "+4+2+2+", $size_body, "+1"),
+                    concat!(".no_dead_strip ", $exported_symbol)
+                );
+            };
         }
+
+        declare_global!(stringify!(${concat(__em_js_ref_, $name)}), "", 0, 1);
+        declare_global!(
+            stringify!(${concat(__em_js__, $name)}),
+            concat!("(", 
+                stringify!($($arg_name),*) ,r#")<::>\n{{"#,
+                emscripten_rs_macros::get_processed_script!($body), r#"}}"#
+            ),
+            emscripten_rs_macros::len_params!($($arg_name),*),
+            emscripten_rs_macros::len_in_bytes!($body)
+        );
 
         #[link(wasm_import_module = "env")]
         #[allow(dead_code)]
@@ -135,6 +130,6 @@ mod tests {
 
     #[test]
     fn test_transitiveness() {
-        assert_eq!(unsafe { first_js(5) }, 20)
+        assert_eq!(unsafe { first_js(5) }, 20);
     }
 }

@@ -11,6 +11,7 @@ homepage = "https://github.com/sutajo/emscripten-rs-sys"
 
 [features]
 default = ["em_js"]
+build_bindings = []
 em_js = []
 
 [dependencies]

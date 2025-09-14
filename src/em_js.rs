@@ -55,7 +55,7 @@ mod tests {
         unsafe {
             let c_str = get_string_from_js();
             assert_eq!(CStr::from_ptr(c_str), c"hello from js");
-            libc::free(c_str as _);
+            emscripten_builtin_free(c_str as _);
         }
     }
 
@@ -87,6 +87,8 @@ mod tests {
 
     use std::simd::i32x4;
     use std::simd::num::SimdInt;
+
+    use crate::emscripten_builtin_free;
 
     #[unsafe(no_mangle)]
     #[target_feature(enable = "simd128")]

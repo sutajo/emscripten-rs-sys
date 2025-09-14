@@ -64,8 +64,6 @@ fn main() {
             .raw_line("#![allow(non_snake_case)]")
             .raw_line("#![allow(non_upper_case_globals)]")
             .derive_default(true)
-            .derive_eq(true)
-            .derive_hash(true)
             .generate()
             .expect("Binding generation failed")
             .write_to_file("src/binding.rs")

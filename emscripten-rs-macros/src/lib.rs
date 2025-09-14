@@ -23,7 +23,7 @@ pub fn len_in_bytes(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn get_processed_script(input: TokenStream) -> TokenStream {
+pub fn get_decorated_script(input: TokenStream) -> TokenStream {
     let params = parse_macro_input!(input as ExprTuple);
 
     let args = params.elems[0].to_token_stream().to_string();

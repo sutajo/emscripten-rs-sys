@@ -26,7 +26,7 @@ macro_rules! em_js {
         declare_global_js_fn!(${concat(__em_js_ref_, $name)}, *b"\0", 1);
         declare_global_js_fn!(
             ${concat(__em_js__, $name)},
-            emscripten_rs_macros::get_processed_script!(([$($arg_name),*], $body)),
+            emscripten_rs_macros::get_decorated_script!(([$($arg_name),*], $body)),
             emscripten_rs_macros::len_in_bytes!((($($arg_name),*), $body))
         );
 

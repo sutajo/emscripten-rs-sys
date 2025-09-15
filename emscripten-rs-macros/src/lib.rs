@@ -3,11 +3,14 @@ use quote::{ToTokens, quote};
 use syn::*;
 
 fn trim_script(script: String) -> String {
-    script.lines().map(|s| {
-        let mut trimmed = s.trim().to_string();
-        trimmed.push(' ');
-        trimmed
-    }).collect::<String>()
+    script
+        .lines()
+        .map(|s| {
+            let mut trimmed = s.trim().to_string();
+            trimmed.push(' ');
+            trimmed
+        })
+        .collect::<String>()
 }
 
 #[proc_macro]
@@ -50,4 +53,66 @@ pub fn get_decorated_script(input: TokenStream) -> TokenStream {
     };
 
     output.into()
+}
+
+/// Generates a unique macro for each call site.
+/// This is an ugly workaround for the problem that normal
+/// macros don't accept the result of proc macros.
+#[proc_macro]
+pub fn inline_js(input: TokenStream) -> TokenStream {
+    let tokens: proc_macro2::TokenStream = input.into();
+
+    let call_site = proc_macro2::Span::call_site();
+    let loc = call_site.unwrap();
+    let mut file = loc.file();
+    file.retain(|c| c.is_ascii_alphanumeric());
+    let name = syn::Ident::new(
+        &format!("_em_asm_{}_{}_{}", file, loc.line(), loc.column()),
+        call_site,
+    );
+
+    let expanded = quote! {
+        {
+            macro_rules! inline_js_impl {
+                (
+                    ( $( $arg_name:ident : $arg_ty:ty ),*) $(-> $ret:ty)?, $($body:tt)*
+                ) => {
+                    {
+                        unsafe {
+                            $crate::export_script_to_linker!(asm, #name, $($arg_name)*, $($body)*);
+                        }
+                
+                        #[link(wasm_import_module = "env")]
+                        #[allow(dead_code)]
+                        unsafe extern "C" {
+                            pub unsafe fn #name($( $arg_name : $arg_ty ),*) $(-> $ret)?;
+                        }
+    
+                        unsafe { #name($($arg_name),*) }
+                    }
+                };
+    
+                (
+                    $($body:tt)*
+                ) => {
+                    {
+                        unsafe {
+                            $crate::export_script_to_linker!(asm, #name,  , $($body)*);
+                        }
+                
+                        #[link(wasm_import_module = "env")]
+                        #[allow(dead_code)]
+                        unsafe extern "C" {
+                            pub unsafe fn #name();
+                        }
+    
+                        unsafe { #name() }
+                    }
+                };
+            }
+
+            inline_js_impl!(#tokens)
+        }
+    };
+    expanded.into()
 }

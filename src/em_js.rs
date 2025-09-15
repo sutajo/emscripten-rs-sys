@@ -1,6 +1,5 @@
 #[macro_export]
 macro_rules! export_bytes {
-    // Pattern: function signature, name, string
     ($asm:ident, $exported_symbol:ident, $code:expr, $size_code:expr) => {
         #[used]
         #[unsafe(no_mangle)]

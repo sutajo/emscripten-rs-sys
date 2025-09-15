@@ -2,17 +2,26 @@ use proc_macro::TokenStream;
 use quote::{ToTokens, quote};
 use syn::*;
 
+fn trim_script(script: String) -> String {
+    script.lines().map(|s| {
+        let mut trimmed = s.trim().to_string();
+        trimmed.push(' ');
+        trimmed
+    }).collect::<String>()
+}
+
 #[proc_macro]
 pub fn len_in_bytes(input: TokenStream) -> TokenStream {
     let params = parse_macro_input!(input as ExprTuple);
 
     let args = params.elems[0].to_token_stream().to_string();
-    let script = parse2::<LitStr>(params.elems[1].to_token_stream()).unwrap();
+    let stringify = parse2::<ExprMacro>(params.elems[1].to_token_stream()).unwrap();
+    let script = trim_script(stringify.mac.tokens.to_string());
 
-    let mut len = script.value().len() + 1;
+    let mut len = script.len() + 1;
 
     // Additional bytes from decoration
-    len += 6;
+    len += 4;
 
     // Arguments length
     len += args.len();
@@ -27,9 +36,10 @@ pub fn get_decorated_script(input: TokenStream) -> TokenStream {
     let params = parse_macro_input!(input as ExprTuple);
 
     let args = params.elems[0].to_token_stream().to_string();
-    let script = parse2::<LitStr>(params.elems[1].to_token_stream()).unwrap().value();
+    let stringify = parse2::<ExprMacro>(params.elems[1].to_token_stream()).unwrap();
+    let script = trim_script(stringify.mac.tokens.to_string());
 
-    let decorated_script = format!("{args}<::>{{{script}}}");
+    let decorated_script = format!("{args}<::>{script}");
     let bytes = decorated_script.as_bytes();
 
     // Turn each byte into a literal token

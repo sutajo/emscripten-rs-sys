@@ -37,14 +37,17 @@ Ways to set linker settings:
 ## Example
 
 ```rust
-em_js!(fn compute_sum(n: c_int) -> c_int, r#"
-    let sum = 0;
-    for(let i=1; i<n; i++)
+js! {
+    fn compute_sum(n: c_int) -> c_int,
     {
-        sum += i;
+        let sum = 0;
+        for(let i=1; i<n; i++)
+        {
+            sum += i;
+        }
+        return sum;
     }
-    return sum;
-"#);
+}
 
 fn test_sum() {
     assert_eq!(unsafe { compute_sum(100) }, 4950)

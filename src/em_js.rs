@@ -121,19 +121,19 @@ mod tests {
     }
 
     js! {
-        fn h() -> f32
-        {
-            return 2.0;
-        }
-
         fn f(x: f32) -> f32
         {
             return Math.pow(x, h());
         } 
-
+        
         fn g(x: f32) -> f32
         {
             return Math.sqrt(f(x));
+        }
+
+        fn h() -> f32
+        {
+            return 2.0;
         }
     }
 

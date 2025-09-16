@@ -38,7 +38,7 @@ Ways to set linker settings:
 
 ```rust
 js! {
-    fn compute_sum(n: c_int) -> c_int,
+    fn compute_sum(n: c_int) -> c_int
     {
         let sum = 0;
         for(let i=1; i<n; i++)

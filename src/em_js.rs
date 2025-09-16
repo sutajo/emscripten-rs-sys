@@ -140,7 +140,7 @@ mod tests {
     #[test]
     fn test_call_fn_from_js_and_rust() {
         unsafe {
-            assert_eq!(f(g(10.0)), f(10.0));
+            assert_eq!(f(g(10.0)), f(h() * 5.0));
         }
     }
 

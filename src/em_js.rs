@@ -42,16 +42,19 @@ macro_rules! export_script_to_linker {
 #[macro_export]
 macro_rules! js {
     (
-        fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),*) $(-> $ret:ty)?, $($body:tt)*
-    ) => {
-        $crate::export_script_to_linker!(global_asm, $name, $($arg_name)*, $($body)*);
+        $( fn $name:ident ( $( $arg_name:ident : $arg_ty:ty ),*) $(-> $ret:ty)? { $($body:tt)* } )*
+    ) => 
+    (
+        $( $crate::export_script_to_linker!(global_asm, $name, $($arg_name)*, $($body)*); )*
 
-        #[link(wasm_import_module = "env")]
-        #[allow(dead_code)]
-        unsafe extern "C" {
-            pub unsafe fn $name($( $arg_name : $arg_ty ),*) $(-> $ret)?;
-        }
-    };
+        $(
+            #[link(wasm_import_module = "env")]
+            #[allow(dead_code)]
+            unsafe extern "C" {
+                pub unsafe fn $name($( $arg_name : $arg_ty ),*) $(-> $ret)?;
+            }
+        )*
+    )
 }
 
 /// Executes a Javascript snippet inside a Rust function.
@@ -64,7 +67,7 @@ mod tests {
     use crate::{em_js::inline_js, emscripten_builtin_free};
 
     js! {
-        fn get_string_from_js() -> *mut c_char,
+        fn get_string_from_js() -> *mut c_char
         {
             var jsString = "hello from js";
             var lengthBytes = jsString.length+1;
@@ -84,7 +87,7 @@ mod tests {
     }
 
     js! {
-        fn string_param(url: *const c_char),
+        fn string_param(url: *const c_char)
         {
             if (UTF8ToString(url) != "test")
             {
@@ -101,7 +104,7 @@ mod tests {
     }
 
     js! {
-        fn sum(n: c_int) -> c_int,
+        fn sum(n: c_int) -> c_int
         {
             let sum = 0;
             for(let i=1; i<n; i++)
@@ -117,6 +120,30 @@ mod tests {
         assert_eq!(unsafe { sum(100) }, 4950);
     }
 
+    js! {
+        fn h() -> f32
+        {
+            return 2.0;
+        }
+
+        fn f(x: f32) -> f32
+        {
+            return Math.pow(x, h());
+        } 
+
+        fn g(x: f32) -> f32
+        {
+            return Math.sqrt(f(x));
+        }
+    }
+
+    #[test]
+    fn test_call_fn_from_js_and_rust() {
+        unsafe {
+            assert_eq!(f(g(10.0)), f(10.0));
+        }
+    }
+
     use std::simd::i32x4;
     use std::simd::num::SimdInt;
 
@@ -127,14 +154,12 @@ mod tests {
     }
 
     js! {
-        fn second_js(param: i32) -> i32,
+        fn second_js(param: i32) -> i32
         {
             return _hadd_rs(param, param, param, param);
         }
-    }
 
-    js! {
-        fn first_js(param: i32) -> i32,
+        fn first_js(param: i32) -> i32
         {
             return second_js(param);
         }
@@ -146,7 +171,7 @@ mod tests {
     }
 
     js! {
-        fn multiple_params(a: i32, b: i32, c: i32) -> i32,
+        fn multiple_params(a: i32, b: i32, c: i32) -> i32
         {
             return a+b*c;
         }

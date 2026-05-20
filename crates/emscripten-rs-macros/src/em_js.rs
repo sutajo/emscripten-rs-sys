@@ -66,6 +66,7 @@ struct JsInput {
     args: Punctuated<Arg, Token![,]>,
     ret: Option<Type>,
     body: proc_macro2::TokenStream,
+    is_async: bool,
 }
 
 impl ToTokens for JsInput {
@@ -79,16 +80,28 @@ impl ToTokens for JsInput {
         } else {
             quote! {}
         };
+        let body = if self.is_async {
+            let inner = &self.body;
+            quote! {
+                { return Asyncify.handleAsync(async () => { #inner }); }
+            }
+        } else {
+            self.body.clone()
+        };
+        let script = get_decorated_script(&self.args, &body);
+        let link_name = if self.is_async {
+            format!("__asyncjs__{}", self.name)
+        } else {
+            self.name.to_string()
+        };
+        let js_name = format_ident!("__em_js__{}", link_name);
         tokens.extend([
-            export_to_linker(
-                true,
-                format_ident!("__em_js__{}", self.name),
-                format!("{}", get_decorated_script(&self.args, &self.body)),
-            ),
+            export_to_linker(true, js_name, script),
             quote! {
                 #[link(wasm_import_module = "env")]
                 #[allow(dead_code)]
                 unsafe extern "C" {
+                    #[link_name = #link_name]
                     pub unsafe fn #name(#args) #ret_type;
                 }
             },
@@ -124,6 +137,11 @@ impl Parse for Arg {
 
 impl Parse for JsInput {
     fn parse(input: ParseStream) -> Result<Self> {
+        let mut is_async = false;
+        if input.parse::<Token![async]>().is_ok() {
+            is_async = true;
+        }
+
         input.parse::<Token![fn]>()?;
 
         let name = input.parse()?;
@@ -147,6 +165,7 @@ impl Parse for JsInput {
             name,
             args,
             ret,
+            is_async,
             body: content.parse()?,
         })
     }

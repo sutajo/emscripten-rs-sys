@@ -51,6 +51,7 @@ mod tests {
                 #[link(wasm_import_module = "env")]
                 #[allow(dead_code)]
                 unsafe extern "C" {
+                    #[link_name = "f"]
                     pub unsafe fn f();
                 }
             }

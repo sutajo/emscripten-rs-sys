@@ -1,7 +1,4 @@
-#![cfg_attr(
-    all(test),
-    feature(portable_simd, asm_experimental_arch, used_with_arg)
-)]
+#![cfg_attr(test, feature(portable_simd, asm_experimental_arch, used_with_arg))]
 #![allow(clippy::approx_constant)]
 
 mod binding;

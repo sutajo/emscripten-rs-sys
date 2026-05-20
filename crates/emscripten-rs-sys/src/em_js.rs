@@ -141,4 +141,24 @@ mod tests {
             console.log("Home Directory: " + os.homedir);
         };
     }
+
+    js! {
+        async fn fetch_google() -> *mut c_char
+        {
+            const response = await fetch("https://google.com");
+            const result = await response.text();
+            var lengthBytes = result.length+1;
+            var stringOnWasmHeap = _malloc(lengthBytes);
+            stringToUTF8(result, stringOnWasmHeap, lengthBytes);
+            return stringOnWasmHeap;
+        }
+    }
+
+    #[test]
+    fn async_js() {
+        let google_html = unsafe { CStr::from_ptr(fetch_google()) }
+            .to_string_lossy()
+            .to_string();
+        assert!(google_html.contains("<!doctype html>"));
+    }
 }

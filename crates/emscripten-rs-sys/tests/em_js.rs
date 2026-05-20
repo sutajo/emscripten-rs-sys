@@ -1,7 +1,7 @@
 #![feature(used_with_arg)]
 #![feature(asm_experimental_arch)]
 
-use emscripten_rs_macros::{inline_js, js};
+use emscripten_rs_sys::em_js::*;
 
 js! {
     fn test(x: i32) -> i32 {

@@ -1,6 +1,6 @@
 [package]
 name = "emscripten-rs-macros"
-version = "0.2.0"
+version = "0.2.1"
 authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]

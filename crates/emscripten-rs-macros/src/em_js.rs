@@ -16,7 +16,7 @@ fn arg_names(args: &Punctuated<Arg, Token![,]>) -> Punctuated<Ident, Token![,]> 
     args.iter().map(|arg| arg.name.clone()).collect()
 }
 
-fn trim_script(script: String) -> String {
+pub(crate) fn trim_script(script: String) -> String {
     script
         .lines()
         .map(|s| {
@@ -195,12 +195,6 @@ impl Parse for JsInputs {
     }
 }
 
-pub(crate) fn js_impl(inputs: JsInputs) -> syn::Result<TokenStream> {
-    Ok(quote! {
-        #inputs
-    })
-}
-
 pub(crate) struct InlineJsInput {
     args: Punctuated<Arg, Token![,]>,
     ret: Option<Type>,
@@ -267,10 +261,4 @@ impl ToTokens for InlineJsInput {
             }
         });
     }
-}
-
-pub(crate) fn inline_js_impl(inputs: InlineJsInput) -> syn::Result<TokenStream> {
-    Ok(quote! {
-        #inputs
-    })
 }

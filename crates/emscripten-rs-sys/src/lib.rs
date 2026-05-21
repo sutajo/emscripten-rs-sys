@@ -1,10 +1,17 @@
 #![cfg_attr(test, feature(portable_simd, asm_experimental_arch, used_with_arg))]
 #![allow(clippy::approx_constant)]
+#![allow(named_asm_labels)]
+#![allow(incomplete_features)]
+#![feature(const_trait_impl)]
+#![feature(unboxed_closures)]
+#![feature(generic_const_exprs)]
+#![feature(const_default)]
 
 mod binding;
 pub use binding::*;
 
 pub mod em_js;
+pub mod em_asm;
 
 #[cfg(test)]
 mod unit_test;

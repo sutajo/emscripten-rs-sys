@@ -36,6 +36,8 @@ Ways to set linker settings:
 
 ## Example
 
+Define Javascript function in Rust:
+
 ```rust
 js! {
     fn compute_sum(n: c_int) -> c_int
@@ -51,5 +53,18 @@ js! {
 
 fn test_sum() {
     assert_eq!(unsafe { compute_sum(100) }, 4950)
+}
+```
+
+Conveniently call Javascript from Rust, with parameter type inference:
+
+```rust
+fn js_asm() {
+    let a = 2;
+    let b = 3;
+    let result = js_asm! { 
+        |a,b| -> i32 { return a+b*b; } 
+    };
+    assert_eq!(result, 2+3*3);
 }
 ```

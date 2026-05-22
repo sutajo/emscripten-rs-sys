@@ -6,6 +6,7 @@
 #![feature(unboxed_closures)]
 #![feature(generic_const_exprs)]
 #![feature(const_default)]
+#![feature(const_index)]
 
 mod binding;
 pub use binding::*;

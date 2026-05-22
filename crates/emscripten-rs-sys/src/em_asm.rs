@@ -72,13 +72,7 @@ impl SignatureBuilder<1> {
 const fn push<T: Copy + [const] Default, const N: usize>(arr: [T; N], value: T) -> [T; N + 1]
 {
     let mut out = [T::default(); N + 1];
-
-    let mut i = 0;
-    while i < N {
-        out[i] = arr[i];
-        i += 1;
-    }
-
+    let _ = &out[..N].copy_from_slice(&arr);
     out[N] = value;
     out
 }

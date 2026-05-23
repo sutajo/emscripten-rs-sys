@@ -51,7 +51,12 @@ impl Parse for AsmInput {
     }
 }
 
-fn substitute_ident(replaced: &mut bool, input: TokenStream, target: &String, i: usize) -> TokenStream {
+fn substitute_ident(
+    replaced: &mut bool,
+    input: TokenStream,
+    target: &String,
+    i: usize,
+) -> TokenStream {
     let mut out = TokenStream::new();
 
     for tt in input {
@@ -60,7 +65,7 @@ fn substitute_ident(replaced: &mut bool, input: TokenStream, target: &String, i:
                 let replacement = format_ident!("__EM_ASM_PARAM__{i}");
                 out.extend([replacement]);
                 *replaced = true;
-            },
+            }
             TokenTree::Group(g) => {
                 let mut new_group = Group::new(
                     g.delimiter(),
@@ -68,7 +73,7 @@ fn substitute_ident(replaced: &mut bool, input: TokenStream, target: &String, i:
                 );
                 new_group.set_span(g.span());
                 out.extend(std::iter::once(TokenTree::Group(new_group)));
-            },
+            }
             tt => {
                 out.extend([tt]);
             }
@@ -117,11 +122,16 @@ impl ToTokens for AsmInput {
             if !replaced {
                 panic!("Parameter '{param}' is unused");
             }
-
         }
         let mut script = trim_script(body_tokens.to_string());
         script = script.replace("__EM_ASM_PARAM__", "$");
-        script = script.replace("\"", "\\\"");
+        script.push('\0');
+
+        let bytes: String = script
+            .bytes()
+            .map(|byte| format!("0x{byte:x}"))
+            .intersperse(",".into())
+            .collect();
 
         static COUNTER: AtomicUsize = AtomicUsize::new(0);
         let code_static = format_ident!(
@@ -131,7 +141,7 @@ impl ToTokens for AsmInput {
         let code_static_decl = format!(".globl {code_static}");
         let type_decl = format!(".type {code_static},@object");
         let label = format!("{code_static}:");
-        let body = format!(".asciz \"{script}\"",);
+        let body = format!(".byte {bytes}",);
         let code_len = script.len() + 1;
         let ret_ty = &self.ret;
         let params = &self.args;

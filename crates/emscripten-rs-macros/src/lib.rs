@@ -1,3 +1,5 @@
+#![feature(iter_intersperse)]
+
 use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::parse2;

@@ -1,6 +1,6 @@
-use std::ffi::{c_char};
+use std::ffi::c_char;
 
-pub use crate::{emscripten_asm_const_double, emscripten_asm_const_ptr, emscripten_asm_const_int};
+pub use crate::{emscripten_asm_const_double, emscripten_asm_const_int, emscripten_asm_const_ptr};
 pub use emscripten_rs_macros::js_asm;
 
 pub trait AsmSignature: Default {
@@ -17,11 +17,7 @@ macro_rules! int_like {
     };
 }
 
-int_like!(
-    u8, i8,
-    u16, i16,
-    u32, i32
-);
+int_like!(u8, i8, u16, i16, u32, i32, ());
 
 impl AsmSignature for i64 {
     const SIGNATURE: char = 'j';
@@ -47,10 +43,6 @@ impl AsmSignature for f64 {
     const SIGNATURE: char = 'd';
 }
 
-impl AsmSignature for () {
-    const SIGNATURE: char = 'i';
-}
-
 pub struct SignatureBuilder<const N: usize> {
     sig: [c_char; N],
 }
@@ -62,15 +54,14 @@ impl SignatureBuilder<1> {
         }
     }
 
-     pub const fn new_for<Ret: AsmSignature>(_: &Ret) -> Self {
+    pub const fn new_for<Ret: AsmSignature>(_: &Ret) -> Self {
         Self {
             sig: [Ret::SIGNATURE as c_char],
         }
     }
 }
 
-const fn push<T: Copy + [const] Default, const N: usize>(arr: [T; N], value: T) -> [T; N + 1]
-{
+const fn push<T: Copy + [const] Default, const N: usize>(arr: [T; N], value: T) -> [T; N + 1] {
     let mut out = [T::default(); N + 1];
     let _ = &out[..N].copy_from_slice(&arr);
     out[N] = value;
@@ -91,6 +82,7 @@ impl<const N: usize> SignatureBuilder<N> {
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
 
     #[test]
@@ -162,12 +154,12 @@ mod tests {
         assert_eq!(result, 6);
     }
 
-     #[test]
+    #[test]
     fn add_doubles() {
         let a = 12.5;
         let b = 52.2;
 
-        let result = js_asm! { 
+        let result = js_asm! {
             |a,b| -> f64 {
                 return a*b;
             }
@@ -176,10 +168,9 @@ mod tests {
     }
 
     #[test]
-    fn ptr_return()
-    {
+    fn ptr_return() {
         let string_ptr = c"Hello".as_ptr();
-        let returned_ptr = js_asm!{ |string_ptr| -> *mut c_char { return string_ptr; } };
+        let returned_ptr = js_asm! { |string_ptr| -> *mut c_char { return string_ptr; } };
         assert_eq!(string_ptr, returned_ptr as *const c_char);
     }
 }

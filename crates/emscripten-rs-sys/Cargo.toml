@@ -1,6 +1,6 @@
 [package]
 name = "emscripten_rs_sys"
-version = "0.2.5"
+version = "0.2.6"
 authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]
@@ -13,7 +13,7 @@ homepage = "https://github.com/sutajo/emscripten-rs-sys"
 build_bindings = []
 
 [dependencies]
-emscripten-rs-macros = { version = "0.2.4", path = "../emscripten-rs-macros" }
+emscripten-rs-macros = { version = "0.2.6", path = "../emscripten-rs-macros" }
 
 [build-dependencies]
 bindgen = "0.72.1"

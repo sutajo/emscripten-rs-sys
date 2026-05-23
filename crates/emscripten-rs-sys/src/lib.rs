@@ -11,8 +11,8 @@
 mod binding;
 pub use binding::*;
 
-pub mod em_js;
 pub mod em_asm;
+pub mod em_js;
 
 #[cfg(test)]
 mod unit_test;

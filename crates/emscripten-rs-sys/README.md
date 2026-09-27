@@ -10,6 +10,20 @@ This crate provides raw, unsafe bindings to the C API of Emscripten, allowing Ru
 
 ⚠️ The only supported target is `wasm32-unknown-emscripten`.
 
+## Features
+
+The default build provides the raw FFI bindings and supports stable Rust.
+The `nightly` feature is disabled by default. Enable it on nightly Rust to use
+`em_js` (`js!`, `inline_js!`) and `em_asm` (`js_asm!`):
+
+```toml
+emscripten_rs_sys = { version = "0.3.0", features = ["nightly"] }
+```
+
+Macro expansions also require feature attributes in the calling crate:
+`#![feature(asm_experimental_arch)]` for `em_js`, and
+`#![feature(min_generic_const_args, generic_const_args)]` for `em_asm`.
+
 ## Prerequisites
 
 You must have the **Emscripten SDK (emsdk)** installed and activated on your system before building.

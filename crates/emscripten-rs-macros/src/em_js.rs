@@ -51,7 +51,7 @@ fn export_to_linker(global: bool, item_name: Ident, mut contents: String) -> Tok
     let module = format_ident!("_em_js_exports_{item_name}");
     quote! {
         mod #module {
-            #[used(linker)]
+            #[used]
             #[unsafe(no_mangle)]
             #[allow(non_upper_case_globals)]
             static #item_name: [u8; #length] = *#bytes;

@@ -61,21 +61,29 @@ impl SignatureBuilder<1> {
     }
 }
 
-const fn push<T: Copy + [const] Default, const N: usize>(arr: [T; N], value: T) -> [T; N + 1] {
-    let mut out = [T::default(); N + 1];
+const NEXT_LEN<const N: usize>: usize = N + 1;
+
+const fn push<T: Copy + [const] Default, const N: usize>(
+    arr: [T; N],
+    value: T,
+) -> [T; core::direct_const_arg!(NEXT_LEN::<N>)] {
+    let mut out = [T::default(); core::direct_const_arg!(NEXT_LEN::<N>)];
     let _ = &out[..N].copy_from_slice(&arr);
     out[N] = value;
     out
 }
 
 impl<const N: usize> SignatureBuilder<N> {
-    pub const fn add_param<Param: AsmSignature>(self, _: &Param) -> SignatureBuilder<{ N + 1 }> {
+    pub const fn add_param<Param: AsmSignature>(
+        self,
+        _: &Param,
+    ) -> SignatureBuilder<core::direct_const_arg!(NEXT_LEN::<N>)> {
         SignatureBuilder {
             sig: push(self.sig, Param::SIGNATURE as c_char),
         }
     }
 
-    pub const fn finish(self) -> [c_char; N + 1] {
+    pub const fn finish(self) -> [c_char; core::direct_const_arg!(NEXT_LEN::<N>)] {
         push(self.sig, '\0' as _)
     }
 }
@@ -90,23 +98,12 @@ mod tests {
         use crate::binding;
 
         let result = unsafe {
-            unsafe extern "C" {
-                pub unsafe static CODE: [u8; 10];
-            }
+            #[unsafe(link_section = "em_asm")]
+            static CODE: [u8; 16] = *b"return $0 + $1;\0";
 
             let x = 10;
             let y = 20;
 
-            mod generated {
-                std::arch::global_asm!(
-                    ".section em_asm,\"R\",@",
-                    ".p2align 0",
-                    ".globl CODE",
-                    ".type CODE,@object",
-                    "CODE:",
-                    ".asciz \"return $0 + $1;\""
-                );
-            }
             binding::emscripten_asm_const_int(
                 CODE.as_ptr() as _,
                 SignatureBuilder::new::<i32>()

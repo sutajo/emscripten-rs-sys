@@ -1,4 +1,3 @@
-#![feature(used_with_arg)]
 #![feature(asm_experimental_arch)]
 
 use emscripten_rs_sys::em_js::*;

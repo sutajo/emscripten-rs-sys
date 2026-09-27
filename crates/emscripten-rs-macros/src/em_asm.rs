@@ -1,6 +1,4 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
-
-use proc_macro2::{Group, TokenStream, TokenTree};
+use proc_macro2::{Group, Literal, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident, quote};
 use syn::{
     Ident, Token, Type, TypePath, braced, parse::Parse, punctuated::Punctuated, spanned::Spanned,
@@ -127,22 +125,8 @@ impl ToTokens for AsmInput {
         script = script.replace("__EM_ASM_PARAM__", "$");
         script.push('\0');
 
-        let bytes: String = script
-            .bytes()
-            .map(|byte| format!("0x{byte:x}"))
-            .intersperse(",".into())
-            .collect();
-
-        static COUNTER: AtomicUsize = AtomicUsize::new(0);
-        let code_static = format_ident!(
-            "__EMSCRIPTEN_ASM_GENERATED__{}",
-            COUNTER.fetch_add(1, Ordering::SeqCst)
-        );
-        let code_static_decl = format!(".globl {code_static}");
-        let type_decl = format!(".type {code_static},@object");
-        let label = format!("{code_static}:");
-        let body = format!(".byte {bytes}",);
-        let code_len = script.len() + 1;
+        let bytes = Literal::byte_string(script.as_bytes());
+        let code_len = script.len();
         let ret_ty = &self.ret;
         let params = &self.args;
 
@@ -178,27 +162,13 @@ impl ToTokens for AsmInput {
             quote! {}
         };
 
-        // global_asm is needed because of rustc bug: https://github.com/rust-lang/rust/issues/146538
-
         tokens.extend(quote! {
             unsafe {
-                unsafe extern "C" {
-                    pub unsafe static #code_static: [u8; #code_len];
-                }
-
-                mod generated {
-                    std::arch::global_asm!(
-                        ".section em_asm,\"R\",@",
-                        ".p2align 0",
-                        #code_static_decl,
-                        #type_decl,
-                        #label,
-                        #body
-                    );
-                }
+                #[unsafe(link_section = "em_asm")]
+                static __EMSCRIPTEN_ASM_CODE: [u8; #code_len] = *#bytes;
 
                 #invoked_fn(
-                    #code_static.as_ptr() as _,
+                    __EMSCRIPTEN_ASM_CODE.as_ptr() as _,
                     #signature.as_ptr(),
                     #params
                 )

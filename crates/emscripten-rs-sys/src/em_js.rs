@@ -6,14 +6,21 @@ mod tests {
     use std::ffi::{CStr, c_char, c_int};
 
     use super::*;
-    use crate::emscripten_builtin_free;
+    use crate::{emscripten_builtin_free, emscripten_builtin_malloc};
+
+    // Export the allocator explicitly: LTO may remove the incidental `_malloc`
+    // export otherwise, since the JavaScript reference is invisible to Rust.
+    #[unsafe(no_mangle)]
+    pub extern "C" fn em_js_test_malloc(size: usize) -> *mut std::ffi::c_void {
+        unsafe { emscripten_builtin_malloc(size) }
+    }
 
     js! {
         fn get_string_from_js() -> *mut c_char
         {
             var jsString = "hello from js";
             var lengthBytes = jsString.length+1;
-            var stringOnWasmHeap = _malloc(lengthBytes);
+            var stringOnWasmHeap = _em_js_test_malloc(lengthBytes);
             stringToUTF8(jsString, stringOnWasmHeap, lengthBytes);
             return stringOnWasmHeap;
         }
@@ -62,13 +69,9 @@ mod tests {
         assert_eq!(unsafe { sum(100) }, 4950);
     }
 
-    use std::simd::i32x4;
-    use std::simd::num::SimdInt;
-
     #[unsafe(no_mangle)]
-    #[target_feature(enable = "simd128")]
     pub extern "C" fn hadd_rs(v1: i32, v2: i32, v3: i32, v4: i32) -> i32 {
-        i32x4::from_array([v1, v2, v3, v4]).reduce_sum()
+        v1 + v2 + v3 + v4
     }
 
     js! {
@@ -143,22 +146,14 @@ mod tests {
     }
 
     js! {
-        async fn fetch_google() -> *mut c_char
+        async fn async_answer(value: i32) -> i32
         {
-            const response = await fetch("https://google.com");
-            const result = await response.text();
-            var lengthBytes = result.length+1;
-            var stringOnWasmHeap = _malloc(lengthBytes);
-            stringToUTF8(result, stringOnWasmHeap, lengthBytes);
-            return stringOnWasmHeap;
+            return await Promise.resolve(value + 1);
         }
     }
 
     #[test]
     fn async_js() {
-        let google_html = unsafe { CStr::from_ptr(fetch_google()) }
-            .to_string_lossy()
-            .to_string();
-        assert!(google_html.contains("<!doctype html>"));
+        assert_eq!(unsafe { async_answer(41) }, 42);
     }
 }

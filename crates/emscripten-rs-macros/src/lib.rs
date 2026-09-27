@@ -1,5 +1,3 @@
-#![feature(iter_intersperse)]
-
 use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
@@ -59,7 +57,7 @@ mod tests {
                 .to_string(),
             quote! {
                 mod _em_js_exports___em_js__f {
-                    #[used(linker)]
+                    #[used]
                     #[unsafe(no_mangle)]
                     #[allow(non_upper_case_globals)]
                     static __em_js__f: [u8; 20usize] =

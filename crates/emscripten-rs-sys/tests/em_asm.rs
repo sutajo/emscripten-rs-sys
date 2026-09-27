@@ -1,4 +1,5 @@
-#![feature(asm_experimental_arch)]
+#![feature(min_generic_const_args, generic_const_args)]
+#![allow(incomplete_features)]
 
 use emscripten_rs_sys::em_asm::*;
 

@@ -1,17 +1,22 @@
-#![cfg_attr(test, feature(portable_simd, asm_experimental_arch, used_with_arg))]
+#![cfg_attr(all(test, feature = "nightly"), feature(asm_experimental_arch))]
 #![allow(clippy::approx_constant)]
 #![allow(named_asm_labels)]
 #![allow(incomplete_features)]
-#![feature(const_trait_impl)]
-#![feature(unboxed_closures)]
-#![feature(generic_const_exprs)]
-#![feature(const_default)]
-#![feature(const_index)]
+#![cfg_attr(feature = "nightly", feature(const_trait_impl))]
+#![cfg_attr(feature = "nightly", feature(unboxed_closures))]
+#![cfg_attr(
+    feature = "nightly",
+    feature(min_generic_const_args, generic_const_args, generic_const_items)
+)]
+#![cfg_attr(feature = "nightly", feature(const_default))]
+#![cfg_attr(feature = "nightly", feature(const_index))]
 
 mod binding;
 pub use binding::*;
 
+#[cfg(feature = "nightly")]
 pub mod em_asm;
+#[cfg(feature = "nightly")]
 pub mod em_js;
 
 #[cfg(test)]

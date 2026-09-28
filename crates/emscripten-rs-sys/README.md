@@ -16,6 +16,10 @@ The raw FFI bindings and the `em_js` (`js!`, `inline_js!`) and `em_asm`
 (`js_asm!`) macros are available by default. The default configuration requires
 no experimental compiler feature attributes in the calling crate.
 
+**Using `em_js` (`js!` or `inline_js!`) requires `-Clink-dead-code`**
+(equivalently, `-C link-dead-code`) unless you enable `force_export`.
+See [Linker setup](#linker-setup) for the Cargo configuration.
+
 ```toml
 emscripten_rs_sys = "0.4.0"
 ```

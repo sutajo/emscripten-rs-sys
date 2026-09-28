@@ -16,8 +16,15 @@ before linking an application.
 
 ## Export configuration
 
-By default, `js!` and `inline_js!` require `-C link-dead-code` in the calling
-application's Rust compiler flags. They need no experimental compiler features.
+**By default, `js!` and `inline_js!` require `-Clink-dead-code`**
+(equivalently, `-C link-dead-code`) in the calling application's Rust compiler
+flags. They need no experimental compiler features. Add this to your
+application's `.cargo/config.toml`, appending to any existing `rustflags`:
+
+```toml
+[target.wasm32-unknown-emscripten]
+rustflags = ["-C", "link-dead-code"]
+```
 
 The optional `force_export` feature emits WebAssembly global assembly to export
 the script symbols without `-C link-dead-code`. Enable it through the sys crate:

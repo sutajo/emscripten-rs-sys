@@ -1,15 +1,20 @@
 [package]
 name = "emscripten-rs-macros"
-version = "0.3.0"
+version = "0.4.0"
 authors = [ "Tamás Suhajda <sutajo@gmail.com>" ]
 edition = "2024"
 keywords = [ "emscripten", "ffi" ]
-homepage = "https://github.com/sutajo/emscripten-rs-sys"
+repository = "https://github.com/sutajo/emscripten-rs-sys"
 description = "Utility macros for emscripten_rs_sys"
 license = "MIT"
+readme = "README.md"
 
 [lib]
 proc-macro = true
+
+[features]
+default = []
+force_export = []
 
 [dependencies]
 proc-macro2 = "1"

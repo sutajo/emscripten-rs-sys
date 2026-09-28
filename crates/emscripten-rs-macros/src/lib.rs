@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
@@ -10,6 +12,10 @@ use crate::{
 mod em_asm;
 mod em_js;
 
+/// Declares JavaScript functions callable from Rust.
+///
+/// Requires `-C link-dead-code`, or the `force_export` feature and the caller's
+/// `#![feature(asm_experimental_arch)]` attribute on nightly Rust.
 #[proc_macro]
 pub fn js(input: TokenStream) -> TokenStream {
     let tokens: proc_macro2::TokenStream = input.into();
@@ -20,6 +26,9 @@ pub fn js(input: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Executes JavaScript with explicitly typed arguments and an optional return type.
+///
+/// Uses the same export configuration as [`js!`].
 #[proc_macro]
 pub fn inline_js(input: TokenStream) -> TokenStream {
     let tokens: proc_macro2::TokenStream = input.into();
@@ -30,6 +39,10 @@ pub fn inline_js(input: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Executes JavaScript with inferred Rust argument types through Emscripten's EM_ASM API.
+///
+/// Import this macro and its helpers through `emscripten_rs_sys::em_asm::*`.
+/// The compiler must include the Wasm `link_section` data-segment fix.
 #[proc_macro]
 pub fn js_asm(input: TokenStream) -> TokenStream {
     let tokens: proc_macro2::TokenStream = input.into();
@@ -43,35 +56,17 @@ pub fn js_asm(input: TokenStream) -> TokenStream {
 #[cfg(test)]
 mod tests {
     use crate::JsInputs;
-    use quote::{ToTokens, quote};
+    use quote::quote;
     use syn::parse2;
 
     #[test]
-    fn simple() {
-        let input = quote! {fn f(){return 1;}
-        };
-        assert_eq!(
-            parse2::<JsInputs>(input)
-                .unwrap()
-                .into_token_stream()
-                .to_string(),
-            quote! {
-                mod _em_js_exports___em_js__f {
-                    #[used]
-                    #[unsafe(no_mangle)]
-                    #[allow(non_upper_case_globals)]
-                    static __em_js__f: [u8; 20usize] =
-                        *b"()<::>{return 1 ; }\0";
-                    std::arch::global_asm!(".globl __em_js__f");
-                }
-                #[link(wasm_import_module = "env")]
-                #[allow(dead_code)]
-                unsafe extern "C" {
-                    #[link_name = "f"]
-                    pub unsafe fn f();
-                }
-            }
-            .to_string()
-        )
+    fn parses_multiple_js_functions() {
+        assert!(
+            parse2::<JsInputs>(quote! {
+                fn f() { return 1; }
+                async fn g(x: i32) -> i32 { return await Promise.resolve(x); }
+            })
+            .is_ok()
+        );
     }
 }

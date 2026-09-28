@@ -1,22 +1,11 @@
-#![cfg_attr(all(test, feature = "nightly"), feature(asm_experimental_arch))]
+#![cfg_attr(feature = "force_export", feature(asm_experimental_arch))]
 #![allow(clippy::approx_constant)]
-#![allow(named_asm_labels)]
-#![allow(incomplete_features)]
-#![cfg_attr(feature = "nightly", feature(const_trait_impl))]
-#![cfg_attr(feature = "nightly", feature(unboxed_closures))]
-#![cfg_attr(
-    feature = "nightly",
-    feature(min_generic_const_args, generic_const_args, generic_const_items)
-)]
-#![cfg_attr(feature = "nightly", feature(const_default))]
-#![cfg_attr(feature = "nightly", feature(const_index))]
+#![doc = include_str!("../README.md")]
 
 mod binding;
 pub use binding::*;
 
-#[cfg(feature = "nightly")]
 pub mod em_asm;
-#[cfg(feature = "nightly")]
 pub mod em_js;
 
 #[cfg(test)]

@@ -129,14 +129,15 @@ impl ToTokens for AsmInput {
         let code_len = script.len();
         let ret_ty = &self.ret;
         let params = &self.args;
+        let signature_len = params.len() + 1;
 
         let mut signature = if let Some(ret_ty) = ret_ty {
             quote! {
-                SignatureBuilder::new::<#ret_ty>()
+                SignatureBuilder::<#signature_len>::new::<#ret_ty>()
             }
         } else {
             quote! {
-                SignatureBuilder::new::<()>()
+                SignatureBuilder::<#signature_len>::new::<()>()
             }
         };
 

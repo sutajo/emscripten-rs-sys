@@ -1,8 +1,7 @@
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
-use proc_macro2::Literal;
-use proc_macro2::TokenStream;
+use proc_macro2::{Literal, TokenStream};
 use quote::ToTokens;
 use quote::format_ident;
 use quote::quote;
@@ -36,15 +35,14 @@ fn get_decorated_script(args: &Punctuated<Arg, Token![,]>, body: &TokenStream) -
     )
 }
 
-fn export_to_linker(global: bool, item_name: Ident, mut contents: String) -> TokenStream {
-    // For Emscripten to see these symbols, they need to be true global variables.
-    // Despite using pub static, in the LLVM IR the variable is defined with internal const.
-    // Thankfully this can be overriden with inline ASM.
-    // Inline assembly for WASM is only supported on nightly at the time of writing.
-    let asm_ident = format_ident!("{}", if global { "global_asm" } else { "asm" });
-
-    let asm = format!(".globl {item_name}");
-
+fn export_to_linker(item_name: Ident, mut contents: String) -> TokenStream {
+    // Without force_export, callers must use -C link-dead-code.
+    let export = if cfg!(feature = "force_export") {
+        let asm = format!(".globl {item_name}");
+        quote! { ::core::arch::global_asm!(#asm); }
+    } else {
+        TokenStream::new()
+    };
     contents.push('\0');
     let length = contents.len();
     let bytes = Literal::byte_string(contents.as_bytes());
@@ -56,7 +54,7 @@ fn export_to_linker(global: bool, item_name: Ident, mut contents: String) -> Tok
             #[allow(non_upper_case_globals)]
             static #item_name: [u8; #length] = *#bytes;
 
-            std::arch::#asm_ident!(#asm);
+            #export
         }
     }
 }
@@ -96,7 +94,7 @@ impl ToTokens for JsInput {
         };
         let js_name = format_ident!("__em_js__{}", link_name);
         tokens.extend([
-            export_to_linker(true, js_name, script),
+            export_to_linker(js_name, script),
             quote! {
                 #[link(wasm_import_module = "env")]
                 #[allow(dead_code)]
@@ -243,7 +241,6 @@ impl ToTokens for InlineJsInput {
             quote! {}
         };
         let export = export_to_linker(
-            true,
             format_ident!("__em_js__{}", name),
             format!("{}", get_decorated_script(&self.args, &self.body)),
         );

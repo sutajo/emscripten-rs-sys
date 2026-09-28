@@ -43,48 +43,37 @@ impl AsmSignature for f64 {
     const SIGNATURE: char = 'd';
 }
 
+/// Builds a null-terminated EM_ASM argument signature on stable Rust.
+/// `N` is the buffer capacity, including the terminating null byte.
 pub struct SignatureBuilder<const N: usize> {
     sig: [c_char; N],
+    len: usize,
 }
 
-impl SignatureBuilder<1> {
+impl<const N: usize> SignatureBuilder<N> {
+    /// The return type is accepted for compatibility but is not encoded:
+    /// Emscripten's signature describes only the variadic arguments.
     pub const fn new<Ret: AsmSignature>() -> Self {
+        assert!(N > 0, "signature needs space for a null terminator");
         Self {
-            sig: [Ret::SIGNATURE as c_char],
+            sig: [0; N],
+            len: 0,
         }
     }
 
     pub const fn new_for<Ret: AsmSignature>(_: &Ret) -> Self {
-        Self {
-            sig: [Ret::SIGNATURE as c_char],
-        }
-    }
-}
-
-const NEXT_LEN<const N: usize>: usize = N + 1;
-
-const fn push<T: Copy + [const] Default, const N: usize>(
-    arr: [T; N],
-    value: T,
-) -> [T; core::direct_const_arg!(NEXT_LEN::<N>)] {
-    let mut out = [T::default(); core::direct_const_arg!(NEXT_LEN::<N>)];
-    let _ = &out[..N].copy_from_slice(&arr);
-    out[N] = value;
-    out
-}
-
-impl<const N: usize> SignatureBuilder<N> {
-    pub const fn add_param<Param: AsmSignature>(
-        self,
-        _: &Param,
-    ) -> SignatureBuilder<core::direct_const_arg!(NEXT_LEN::<N>)> {
-        SignatureBuilder {
-            sig: push(self.sig, Param::SIGNATURE as c_char),
-        }
+        Self::new::<Ret>()
     }
 
-    pub const fn finish(self) -> [c_char; core::direct_const_arg!(NEXT_LEN::<N>)] {
-        push(self.sig, '\0' as _)
+    pub const fn add_param<Param: AsmSignature>(mut self, _: &Param) -> Self {
+        assert!(self.len + 1 < N, "signature buffer is full");
+        self.sig[self.len] = Param::SIGNATURE as c_char;
+        self.len += 1;
+        self
+    }
+
+    pub const fn finish(self) -> [c_char; N] {
+        self.sig
     }
 }
 
@@ -94,28 +83,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn proof_of_concept() {
-        use crate::binding;
-
-        let result = unsafe {
-            #[unsafe(link_section = "em_asm")]
-            static CODE: [u8; 16] = *b"return $0 + $1;\0";
-
-            let x = 10;
-            let y = 20;
-
-            binding::emscripten_asm_const_int(
-                CODE.as_ptr() as _,
-                SignatureBuilder::new::<i32>()
-                    .add_param(&x)
-                    .add_param(&y)
-                    .finish()
-                    .as_ptr(),
-                x,
-                y,
-            )
-        };
-
+    fn add_ints() {
+        let x = 10;
+        let y = 20;
+        let result = js_asm! { |x,y| -> i32 { return x + y; } };
         assert_eq!(result, 30);
     }
 

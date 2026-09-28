@@ -4,7 +4,6 @@
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
-pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
 pub const EMSCRIPTEN_RESULT_SUCCESS: u32 = 0;
 pub const EMSCRIPTEN_RESULT_DEFERRED: u32 = 1;
 pub const EMSCRIPTEN_RESULT_NOT_SUPPORTED: i32 = -1;
@@ -15,15 +14,17 @@ pub const EMSCRIPTEN_RESULT_INVALID_PARAM: i32 = -5;
 pub const EMSCRIPTEN_RESULT_FAILED: i32 = -6;
 pub const EMSCRIPTEN_RESULT_NO_DATA: i32 = -7;
 pub const EMSCRIPTEN_RESULT_TIMED_OUT: i32 = -8;
-pub const EMSCRIPTEN_NOTIFY_ALL_WAITERS: i32 = -1;
 pub const SEM_VALUE_MAX: u32 = 2147483647;
 pub const SEM_NSEMS_MAX: u32 = 256;
 pub const _POSIX_SEM_NSEMS_MAX: u32 = 256;
 pub const _POSIX_SEM_VALUE_MAX: u32 = 32767;
 pub const EMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES: u32 = 1;
-pub const __EMSCRIPTEN_major__: u32 = 4;
+pub const __EMSCRIPTEN_MAJOR__: u32 = 6;
+pub const __EMSCRIPTEN_MINOR__: u32 = 0;
+pub const __EMSCRIPTEN_TINY__: u32 = 10;
+pub const __EMSCRIPTEN_major__: u32 = 6;
 pub const __EMSCRIPTEN_minor__: u32 = 0;
-pub const __EMSCRIPTEN_tiny__: u32 = 12;
+pub const __EMSCRIPTEN_tiny__: u32 = 10;
 pub const EM_TIMING_SETTIMEOUT: u32 = 0;
 pub const EM_TIMING_RAF: u32 = 1;
 pub const EM_TIMING_SETIMMEDIATE: u32 = 2;
@@ -100,6 +101,7 @@ pub const EMSCRIPTEN_EVENT_MOUSEOVER: u32 = 35;
 pub const EMSCRIPTEN_EVENT_MOUSEOUT: u32 = 36;
 pub const EMSCRIPTEN_EVENT_CANVASRESIZED: u32 = 37;
 pub const EMSCRIPTEN_EVENT_POINTERLOCKERROR: u32 = 38;
+pub const EMSCRIPTEN_EVENT_CONTEXTMENU: u32 = 39;
 pub const EMSCRIPTEN_EVENT_TARGET_INVALID: u32 = 0;
 pub const EM_HTML5_SHORT_STRING_LEN_BYTES: u32 = 32;
 pub const EM_HTML5_MEDIUM_STRING_LEN_BYTES: u32 = 64;
@@ -166,8 +168,8 @@ pub const EM_FUNC_SIG_PARAM_P: u32 = 0;
 pub const EM_FUNC_SIG_PARAM_B: u32 = 4;
 pub const EM_FUNC_SIG_PARAM_F2I: u32 = 5;
 pub const EM_FUNC_SIG_SPECIAL_INTERNAL: u32 = 16777216;
-pub const EMSCRIPTEN_WASM_WORKER_ID_PARENT: u32 = 0;
 pub const EMSCRIPTEN_LOCK_T_STATIC_INITIALIZER: u32 = 0;
+pub const EMSCRIPTEN_WASM_WORKER_ID_PARENT: u32 = 0;
 pub const EMSCRIPTEN_AUDIO_MAIN_THREAD: u32 = 0;
 pub type emscripten_align1_short = ::std::os::raw::c_short;
 pub type emscripten_align4_int64 = ::std::os::raw::c_longlong;
@@ -213,66 +215,16 @@ unsafe extern "C" {
         addr: *mut ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int;
 }
-pub type va_list = __builtin_va_list;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _IO_FILE {
-    _unused: [u8; 0],
+unsafe extern "C" {
+    pub fn emscripten_atomic_wait_suspending(
+        addr: *mut ::std::os::raw::c_void,
+        value: u32,
+        maxWaitMilliseconds: f64,
+    ) -> i32;
 }
-pub type FILE = _IO_FILE;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct pthread_attr_t {
-    pub __u: pthread_attr_t__bindgen_ty_1,
-    pub _a_transferredcanvases: *const ::std::os::raw::c_char,
+unsafe extern "C" {
+    pub fn emscripten_atomics_is_lock_free(byteWidth: ::std::os::raw::c_int) -> bool;
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union pthread_attr_t__bindgen_ty_1 {
-    pub __i: [::std::os::raw::c_int; 10usize],
-    pub __vi: [::std::os::raw::c_int; 10usize],
-    pub __s: [::std::os::raw::c_ulong; 10usize],
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of pthread_attr_t__bindgen_ty_1"]
-        [::std::mem::size_of::<pthread_attr_t__bindgen_ty_1>() - 40usize];
-    ["Alignment of pthread_attr_t__bindgen_ty_1"]
-        [::std::mem::align_of::<pthread_attr_t__bindgen_ty_1>() - 4usize];
-    ["Offset of field: pthread_attr_t__bindgen_ty_1::__i"]
-        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __i) - 0usize];
-    ["Offset of field: pthread_attr_t__bindgen_ty_1::__vi"]
-        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __vi) - 0usize];
-    ["Offset of field: pthread_attr_t__bindgen_ty_1::__s"]
-        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __s) - 0usize];
-};
-impl Default for pthread_attr_t__bindgen_ty_1 {
-    fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of pthread_attr_t"][::std::mem::size_of::<pthread_attr_t>() - 44usize];
-    ["Alignment of pthread_attr_t"][::std::mem::align_of::<pthread_attr_t>() - 4usize];
-    ["Offset of field: pthread_attr_t::__u"][::std::mem::offset_of!(pthread_attr_t, __u) - 0usize];
-    ["Offset of field: pthread_attr_t::_a_transferredcanvases"]
-        [::std::mem::offset_of!(pthread_attr_t, _a_transferredcanvases) - 40usize];
-};
-impl Default for pthread_attr_t {
-    fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-pub type pthread_t = ::std::os::raw::c_ulong;
 unsafe extern "C" {
     pub fn emscripten_asm_const_int(
         code: *const ::std::os::raw::c_char,
@@ -442,6 +394,72 @@ pub struct __em_asm_type_tuple {
 pub struct __em_asm_sig_builder {
     pub _address: u8,
 }
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct _IO_FILE {
+    pub __x: ::std::os::raw::c_char,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _IO_FILE"][::std::mem::size_of::<_IO_FILE>() - 1usize];
+    ["Alignment of _IO_FILE"][::std::mem::align_of::<_IO_FILE>() - 1usize];
+    ["Offset of field: _IO_FILE::__x"][::std::mem::offset_of!(_IO_FILE, __x) - 0usize];
+};
+pub type FILE = _IO_FILE;
+pub type va_list = __builtin_va_list;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct pthread_attr_t {
+    pub __u: pthread_attr_t__bindgen_ty_1,
+    pub _a_transferredcanvases: *const ::std::os::raw::c_char,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union pthread_attr_t__bindgen_ty_1 {
+    pub __i: [::std::os::raw::c_int; 10usize],
+    pub __vi: [::std::os::raw::c_int; 10usize],
+    pub __s: [::std::os::raw::c_ulong; 10usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of pthread_attr_t__bindgen_ty_1"]
+        [::std::mem::size_of::<pthread_attr_t__bindgen_ty_1>() - 40usize];
+    ["Alignment of pthread_attr_t__bindgen_ty_1"]
+        [::std::mem::align_of::<pthread_attr_t__bindgen_ty_1>() - 4usize];
+    ["Offset of field: pthread_attr_t__bindgen_ty_1::__i"]
+        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __i) - 0usize];
+    ["Offset of field: pthread_attr_t__bindgen_ty_1::__vi"]
+        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __vi) - 0usize];
+    ["Offset of field: pthread_attr_t__bindgen_ty_1::__s"]
+        [::std::mem::offset_of!(pthread_attr_t__bindgen_ty_1, __s) - 0usize];
+};
+impl Default for pthread_attr_t__bindgen_ty_1 {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of pthread_attr_t"][::std::mem::size_of::<pthread_attr_t>() - 44usize];
+    ["Alignment of pthread_attr_t"][::std::mem::align_of::<pthread_attr_t>() - 4usize];
+    ["Offset of field: pthread_attr_t::__u"][::std::mem::offset_of!(pthread_attr_t, __u) - 0usize];
+    ["Offset of field: pthread_attr_t::_a_transferredcanvases"]
+        [::std::mem::offset_of!(pthread_attr_t, _a_transferredcanvases) - 40usize];
+};
+impl Default for pthread_attr_t {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type pthread_t = ::std::os::raw::c_ulong;
 pub type emscripten_internal_TYPEID = *const ::std::os::raw::c_void;
 pub const emscripten_internal_EM_INVOKER_KIND_FUNCTION: emscripten_internal_EM_INVOKER_KIND = 0;
 pub const emscripten_internal_EM_INVOKER_KIND_METHOD: emscripten_internal_EM_INVOKER_KIND = 1;
@@ -493,6 +511,13 @@ unsafe extern "C" {
     pub fn emscripten_internal__emval_new_array_from_memory_view(
         mv: emscripten_EM_VAL,
     ) -> emscripten_EM_VAL;
+}
+unsafe extern "C" {
+    #[link_name = "\u{1}_emval_array_to_memory_view"]
+    pub fn emscripten_internal__emval_array_to_memory_view(
+        dst: emscripten_EM_VAL,
+        src: emscripten_EM_VAL,
+    );
 }
 unsafe extern "C" {
     #[link_name = "\u{1}_emval_new_object"]
@@ -632,6 +657,12 @@ unsafe extern "C" {
     pub fn emscripten_internal__emval_delete(
         object: emscripten_EM_VAL,
         property: emscripten_EM_VAL,
+    ) -> bool;
+}
+unsafe extern "C" {
+    #[link_name = "\u{1}_emval_is_catchable_cpp_exception_object"]
+    pub fn emscripten_internal__emval_is_catchable_cpp_exception_object(
+        object: emscripten_EM_VAL,
     ) -> bool;
 }
 unsafe extern "C" {
@@ -833,6 +864,10 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn emscripten_promise_await(promise: em_promise_t) -> em_settled_result_t;
+}
+unsafe extern "C" {
+    pub fn emscripten_promise_await_unchecked(promise: em_promise_t)
+    -> *mut ::std::os::raw::c_void;
 }
 unsafe extern "C" {
     pub fn emscripten_async_wget(
@@ -1205,34 +1240,6 @@ unsafe extern "C" {
     );
 }
 unsafe extern "C" {
-    pub fn emscripten_idb_load_blob(
-        db_name: *const ::std::os::raw::c_char,
-        file_id: *const ::std::os::raw::c_char,
-        pblob: *mut ::std::os::raw::c_int,
-        perror: *mut ::std::os::raw::c_int,
-    );
-}
-unsafe extern "C" {
-    pub fn emscripten_idb_store_blob(
-        db_name: *const ::std::os::raw::c_char,
-        file_id: *const ::std::os::raw::c_char,
-        buffer: *mut ::std::os::raw::c_void,
-        num: ::std::os::raw::c_int,
-        perror: *mut ::std::os::raw::c_int,
-    );
-}
-unsafe extern "C" {
-    pub fn emscripten_idb_read_from_blob(
-        blob: ::std::os::raw::c_int,
-        start: ::std::os::raw::c_int,
-        num: ::std::os::raw::c_int,
-        buffer: *mut ::std::os::raw::c_void,
-    );
-}
-unsafe extern "C" {
-    pub fn emscripten_idb_free_blob(blob: ::std::os::raw::c_int);
-}
-unsafe extern "C" {
     pub fn emscripten_run_preload_plugins(
         file: *const ::std::os::raw::c_char,
         onload: em_str_callback_func,
@@ -1251,9 +1258,6 @@ unsafe extern "C" {
         onload: em_run_preload_plugins_data_onload_func,
         onerror: em_arg_callback_func,
     );
-}
-unsafe extern "C" {
-    pub fn emscripten_lazy_load_code();
 }
 pub type worker_handle = ::std::os::raw::c_int;
 unsafe extern "C" {
@@ -1772,14 +1776,14 @@ unsafe extern "C" {
 unsafe extern "C" {
     pub fn emscripten_fiber_swap(
         old_fiber: *mut emscripten_fiber_t,
-        new_fiber: *mut emscripten_fiber_t,
+        new_fibe: *mut emscripten_fiber_t,
     );
 }
 unsafe extern "C" {
     pub fn emscripten_get_sbrk_ptr() -> *mut usize;
 }
 unsafe extern "C" {
-    pub fn emscripten_resize_heap(requested_size: usize) -> ::std::os::raw::c_int;
+    pub fn emscripten_resize_heap(requested_size: usize) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_get_heap_size() -> usize;
@@ -1828,6 +1832,7 @@ pub struct EmscriptenWebGLContextAttributes {
     pub explicitSwapControl: bool,
     pub proxyContextToMainThread: EMSCRIPTEN_WEBGL_CONTEXT_PROXY_MODE,
     pub renderViaOffscreenBackBuffer: bool,
+    pub desynchronized: bool,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -1873,6 +1878,8 @@ const _: () = {
         renderViaOffscreenBackBuffer
     )
         - 32usize];
+    ["Offset of field: EmscriptenWebGLContextAttributes::desynchronized"]
+        [::std::mem::offset_of!(EmscriptenWebGLContextAttributes, desynchronized) - 33usize];
 };
 unsafe extern "C" {
     pub fn emscripten_webgl_init_context_attributes(
@@ -2333,6 +2340,15 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn emscripten_set_mouseout_callback_on_thread(
+        target: *const ::std::os::raw::c_char,
+        userData: *mut ::std::os::raw::c_void,
+        useCapture: bool,
+        callback: em_mouse_callback_func,
+        targetThread: pthread_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    pub fn emscripten_set_contextmenu_callback_on_thread(
         target: *const ::std::os::raw::c_char,
         userData: *mut ::std::os::raw::c_void,
         useCapture: bool,
@@ -3228,6 +3244,14 @@ unsafe extern "C" {
     pub fn emscripten_html5_remove_all_event_listeners();
 }
 unsafe extern "C" {
+    pub fn emscripten_html5_remove_event_listener(
+        target: *const ::std::os::raw::c_char,
+        userData: *mut ::std::os::raw::c_void,
+        eventTypeId: ::std::os::raw::c_int,
+        callback: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
     pub fn emscripten_request_animation_frame(
         cb: ::std::option::Option<
             unsafe extern "C" fn(time: f64, userData: *mut ::std::os::raw::c_void) -> bool,
@@ -3251,300 +3275,6 @@ unsafe extern "C" {
 }
 unsafe extern "C" {
     pub fn emscripten_performance_now() -> f64;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUBindGroupImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUBindGroup = *mut WGPUBindGroupImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUBindGroupLayoutImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUBindGroupLayout = *mut WGPUBindGroupLayoutImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUBufferImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUBuffer = *mut WGPUBufferImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUCommandBufferImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUCommandBuffer = *mut WGPUCommandBufferImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUCommandEncoderImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUCommandEncoder = *mut WGPUCommandEncoderImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUComputePassEncoderImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUComputePassEncoder = *mut WGPUComputePassEncoderImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUComputePipelineImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUComputePipeline = *mut WGPUComputePipelineImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUDeviceImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUDevice = *mut WGPUDeviceImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUPipelineLayoutImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUPipelineLayout = *mut WGPUPipelineLayoutImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUQuerySetImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUQuerySet = *mut WGPUQuerySetImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUQueueImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUQueue = *mut WGPUQueueImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPURenderBundleImpl {
-    _unused: [u8; 0],
-}
-pub type WGPURenderBundle = *mut WGPURenderBundleImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPURenderBundleEncoderImpl {
-    _unused: [u8; 0],
-}
-pub type WGPURenderBundleEncoder = *mut WGPURenderBundleEncoderImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPURenderPassEncoderImpl {
-    _unused: [u8; 0],
-}
-pub type WGPURenderPassEncoder = *mut WGPURenderPassEncoderImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPURenderPipelineImpl {
-    _unused: [u8; 0],
-}
-pub type WGPURenderPipeline = *mut WGPURenderPipelineImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUSamplerImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUSampler = *mut WGPUSamplerImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUShaderModuleImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUShaderModule = *mut WGPUShaderModuleImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUSurfaceImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUSurface = *mut WGPUSurfaceImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUSwapChainImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUSwapChain = *mut WGPUSwapChainImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUTextureImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUTexture = *mut WGPUTextureImpl;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct WGPUTextureViewImpl {
-    _unused: [u8; 0],
-}
-pub type WGPUTextureView = *mut WGPUTextureViewImpl;
-unsafe extern "C" {
-    pub fn emscripten_webgpu_get_device() -> WGPUDevice;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_release_js_handle(js_handle: ::std::os::raw::c_int);
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_surface(arg1: ::std::os::raw::c_int) -> WGPUSurface;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_surface(arg1: WGPUSurface) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_swap_chain(arg1: ::std::os::raw::c_int) -> WGPUSwapChain;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_swap_chain(arg1: WGPUSwapChain) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_device(arg1: ::std::os::raw::c_int) -> WGPUDevice;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_device(arg1: WGPUDevice) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_queue(arg1: ::std::os::raw::c_int) -> WGPUQueue;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_queue(arg1: WGPUQueue) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_command_buffer(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUCommandBuffer;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_command_buffer(
-        arg1: WGPUCommandBuffer,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_command_encoder(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUCommandEncoder;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_command_encoder(
-        arg1: WGPUCommandEncoder,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_render_pass_encoder(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPURenderPassEncoder;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_render_pass_encoder(
-        arg1: WGPURenderPassEncoder,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_compute_pass_encoder(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUComputePassEncoder;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_compute_pass_encoder(
-        arg1: WGPUComputePassEncoder,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_bind_group(arg1: ::std::os::raw::c_int) -> WGPUBindGroup;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_bind_group(arg1: WGPUBindGroup) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_buffer(arg1: ::std::os::raw::c_int) -> WGPUBuffer;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_buffer(arg1: WGPUBuffer) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_sampler(arg1: ::std::os::raw::c_int) -> WGPUSampler;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_sampler(arg1: WGPUSampler) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_texture(arg1: ::std::os::raw::c_int) -> WGPUTexture;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_texture(arg1: WGPUTexture) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_texture_view(arg1: ::std::os::raw::c_int) -> WGPUTextureView;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_texture_view(arg1: WGPUTextureView) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_query_set(arg1: ::std::os::raw::c_int) -> WGPUQuerySet;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_query_set(arg1: WGPUQuerySet) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_bind_group_layout(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUBindGroupLayout;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_bind_group_layout(
-        arg1: WGPUBindGroupLayout,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_pipeline_layout(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUPipelineLayout;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_pipeline_layout(
-        arg1: WGPUPipelineLayout,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_render_pipeline(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPURenderPipeline;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_render_pipeline(
-        arg1: WGPURenderPipeline,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_compute_pipeline(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPUComputePipeline;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_compute_pipeline(
-        arg1: WGPUComputePipeline,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_shader_module(arg1: ::std::os::raw::c_int) -> WGPUShaderModule;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_shader_module(arg1: WGPUShaderModule) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_render_bundle_encoder(
-        arg1: ::std::os::raw::c_int,
-    ) -> WGPURenderBundleEncoder;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_render_bundle_encoder(
-        arg1: WGPURenderBundleEncoder,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_import_render_bundle(arg1: ::std::os::raw::c_int) -> WGPURenderBundle;
-}
-unsafe extern "C" {
-    pub fn emscripten_webgpu_export_render_bundle(arg1: WGPURenderBundle) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
     pub fn emscripten_dom_vk_to_string(
@@ -3853,7 +3583,7 @@ unsafe extern "C" {
         target_thread: pthread_t,
         func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         arg: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    ) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_proxy_sync(
@@ -3861,7 +3591,7 @@ unsafe extern "C" {
         target_thread: pthread_t,
         func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         arg: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    ) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_proxy_sync_with_ctx(
@@ -3871,7 +3601,7 @@ unsafe extern "C" {
             unsafe extern "C" fn(arg1: *mut em_proxying_ctx, arg2: *mut ::std::os::raw::c_void),
         >,
         arg: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    ) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_proxy_callback(
@@ -3881,7 +3611,7 @@ unsafe extern "C" {
         callback: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         cancel: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         arg: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    ) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_proxy_callback_with_ctx(
@@ -3893,7 +3623,7 @@ unsafe extern "C" {
         callback: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         cancel: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
         arg: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    ) -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_proxy_promise(
@@ -4013,10 +3743,100 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
-    pub fn emscripten_has_threading_support() -> ::std::os::raw::c_int;
+    pub fn emscripten_lock_init(lock: *mut u32);
 }
 unsafe extern "C" {
-    pub fn emscripten_num_logical_cores() -> ::std::os::raw::c_int;
+    pub fn emscripten_lock_wait_acquire(lock: *mut u32, maxWaitNanoseconds: i64) -> bool;
+}
+unsafe extern "C" {
+    pub fn emscripten_lock_waitinf_acquire(lock: *mut u32);
+}
+unsafe extern "C" {
+    pub fn emscripten_lock_busyspin_wait_acquire(lock: *mut u32, maxWaitMilliseconds: f64) -> bool;
+}
+unsafe extern "C" {
+    pub fn emscripten_lock_busyspin_waitinf_acquire(lock: *mut u32);
+}
+pub type emscripten_async_wait_volatile_callback_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        address: *mut ::std::os::raw::c_void,
+        value: u32,
+        waitResult: ::std::os::raw::c_int,
+        userData: *mut ::std::os::raw::c_void,
+    ),
+>;
+unsafe extern "C" {
+    pub fn emscripten_lock_async_acquire(
+        lock: *mut u32,
+        asyncWaitFinished: emscripten_async_wait_volatile_callback_t,
+        userData: *mut ::std::os::raw::c_void,
+        maxWaitMilliseconds: f64,
+    );
+}
+unsafe extern "C" {
+    pub fn emscripten_lock_try_acquire(lock: *mut u32) -> bool;
+}
+unsafe extern "C" {
+    pub fn emscripten_lock_release(lock: *mut u32);
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_init(sem: *mut u32, num: ::std::os::raw::c_int);
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_try_acquire(
+        sem: *mut u32,
+        num: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_async_acquire(
+        sem: *mut u32,
+        num: ::std::os::raw::c_int,
+        asyncWaitFinished: emscripten_async_wait_volatile_callback_t,
+        userData: *mut ::std::os::raw::c_void,
+        maxWaitMilliseconds: f64,
+    );
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_wait_acquire(
+        sem: *mut u32,
+        num: ::std::os::raw::c_int,
+        maxWaitNanoseconds: i64,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_waitinf_acquire(
+        sem: *mut u32,
+        num: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    pub fn emscripten_semaphore_release(sem: *mut u32, num: ::std::os::raw::c_int) -> u32;
+}
+unsafe extern "C" {
+    pub fn emscripten_condvar_init(condvar: *mut u32);
+}
+unsafe extern "C" {
+    pub fn emscripten_condvar_waitinf(condvar: *mut u32, lock: *mut u32);
+}
+unsafe extern "C" {
+    pub fn emscripten_condvar_wait(
+        condvar: *mut u32,
+        lock: *mut u32,
+        maxWaitNanoseconds: i64,
+    ) -> bool;
+}
+unsafe extern "C" {
+    pub fn emscripten_condvar_wait_async(
+        condvar: *mut u32,
+        lock: *mut u32,
+        asyncWaitFinished: emscripten_async_wait_callback_t,
+        userData: *mut ::std::os::raw::c_void,
+        maxWaitMilliseconds: f64,
+    ) -> i32;
+}
+unsafe extern "C" {
+    pub fn emscripten_condvar_signal(condvar: *mut u32, numWaitersToSignal: u32);
 }
 unsafe extern "C" {
     pub fn emscripten_futex_wait(
@@ -4032,10 +3852,16 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
-    pub fn emscripten_is_main_runtime_thread() -> ::std::os::raw::c_int;
+    pub fn emscripten_has_threading_support() -> bool;
 }
 unsafe extern "C" {
-    pub fn emscripten_is_main_browser_thread() -> ::std::os::raw::c_int;
+    pub fn emscripten_num_logical_cores() -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    pub fn emscripten_is_main_runtime_thread() -> bool;
+}
+unsafe extern "C" {
+    pub fn emscripten_is_main_browser_thread() -> bool;
 }
 unsafe extern "C" {
     pub fn emscripten_main_thread_process_queued_calls();
@@ -4067,14 +3893,6 @@ unsafe extern "C" {
 unsafe extern "C" {
     pub fn emscripten_check_blocking_allowed();
 }
-pub type emscripten_async_wait_volatile_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        address: *mut ::std::os::raw::c_void,
-        value: u32,
-        waitResult: ::std::os::raw::c_int,
-        userData: *mut ::std::os::raw::c_void,
-    ),
->;
 unsafe extern "C" {
     pub fn emscripten_malloc_wasm_worker(stackSize: usize) -> ::std::os::raw::c_int;
 }
@@ -4172,116 +3990,27 @@ unsafe extern "C" {
 unsafe extern "C" {
     pub fn emscripten_navigator_hardware_concurrency() -> ::std::os::raw::c_int;
 }
-unsafe extern "C" {
-    pub fn emscripten_atomics_is_lock_free(
-        byteWidth: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_init(lock: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_wait_acquire(lock: *mut u32, maxWaitNanoseconds: i64) -> bool;
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_waitinf_acquire(lock: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_busyspin_wait_acquire(lock: *mut u32, maxWaitMilliseconds: f64) -> bool;
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_busyspin_waitinf_acquire(lock: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_async_acquire(
-        lock: *mut u32,
-        asyncWaitFinished: emscripten_async_wait_volatile_callback_t,
-        userData: *mut ::std::os::raw::c_void,
-        maxWaitMilliseconds: f64,
-    );
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_try_acquire(lock: *mut u32) -> bool;
-}
-unsafe extern "C" {
-    pub fn emscripten_lock_release(lock: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_init(sem: *mut u32, num: ::std::os::raw::c_int);
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_try_acquire(
-        sem: *mut u32,
-        num: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_async_acquire(
-        sem: *mut u32,
-        num: ::std::os::raw::c_int,
-        asyncWaitFinished: emscripten_async_wait_volatile_callback_t,
-        userData: *mut ::std::os::raw::c_void,
-        maxWaitMilliseconds: f64,
-    );
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_wait_acquire(
-        sem: *mut u32,
-        num: ::std::os::raw::c_int,
-        maxWaitNanoseconds: i64,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_waitinf_acquire(
-        sem: *mut u32,
-        num: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-unsafe extern "C" {
-    pub fn emscripten_semaphore_release(sem: *mut u32, num: ::std::os::raw::c_int) -> u32;
-}
-unsafe extern "C" {
-    pub fn emscripten_condvar_init(condvar: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_condvar_waitinf(condvar: *mut u32, lock: *mut u32);
-}
-unsafe extern "C" {
-    pub fn emscripten_condvar_wait(
-        condvar: *mut u32,
-        lock: *mut u32,
-        maxWaitNanoseconds: i64,
-    ) -> bool;
-}
-unsafe extern "C" {
-    pub fn emscripten_condvar_wait_async(
-        condvar: *mut u32,
-        lock: *mut u32,
-        asyncWaitFinished: emscripten_async_wait_callback_t,
-        userData: *mut ::std::os::raw::c_void,
-        maxWaitMilliseconds: f64,
-    ) -> i32;
-}
-unsafe extern "C" {
-    pub fn emscripten_condvar_signal(condvar: *mut u32, numWaitersToSignal: i64);
-}
 pub type EMSCRIPTEN_WEBAUDIO_T = ::std::os::raw::c_int;
+pub type EMSCRIPTEN_AUDIO_WORKLET_NODE_T = ::std::os::raw::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct EmscriptenWebAudioCreateAttributes {
     pub latencyHint: *const ::std::os::raw::c_char,
     pub sampleRate: u32,
+    pub renderSizeHint: i32,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of EmscriptenWebAudioCreateAttributes"]
-        [::std::mem::size_of::<EmscriptenWebAudioCreateAttributes>() - 8usize];
+        [::std::mem::size_of::<EmscriptenWebAudioCreateAttributes>() - 12usize];
     ["Alignment of EmscriptenWebAudioCreateAttributes"]
         [::std::mem::align_of::<EmscriptenWebAudioCreateAttributes>() - 4usize];
     ["Offset of field: EmscriptenWebAudioCreateAttributes::latencyHint"]
         [::std::mem::offset_of!(EmscriptenWebAudioCreateAttributes, latencyHint) - 0usize];
     ["Offset of field: EmscriptenWebAudioCreateAttributes::sampleRate"]
         [::std::mem::offset_of!(EmscriptenWebAudioCreateAttributes, sampleRate) - 4usize];
+    ["Offset of field: EmscriptenWebAudioCreateAttributes::renderSizeHint"]
+        [::std::mem::offset_of!(EmscriptenWebAudioCreateAttributes, renderSizeHint) - 8usize];
 };
 impl Default for EmscriptenWebAudioCreateAttributes {
     fn default() -> Self {
@@ -4416,7 +4145,11 @@ unsafe extern "C" {
         audioContext: EMSCRIPTEN_WEBAUDIO_T,
     ) -> ::std::os::raw::c_int;
 }
-pub type EMSCRIPTEN_AUDIO_WORKLET_NODE_T = ::std::os::raw::c_int;
+unsafe extern "C" {
+    pub fn emscripten_audio_context_sample_rate(
+        audioContext: EMSCRIPTEN_WEBAUDIO_T,
+    ) -> ::std::os::raw::c_int;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct AudioSampleFrame {
@@ -4479,17 +4212,32 @@ pub type EmscriptenWorkletNodeProcessCallback = ::std::option::Option<
         userData4: *mut ::std::os::raw::c_void,
     ) -> bool,
 >;
+pub const WEBAUDIO_CHANNEL_COUNT_MODE_WEBAUDIO_CHANNEL_COUNT_MODE_MAX: WEBAUDIO_CHANNEL_COUNT_MODE =
+    0;
+pub const WEBAUDIO_CHANNEL_COUNT_MODE_WEBAUDIO_CHANNEL_COUNT_MODE_CLAMPED_MAX:
+    WEBAUDIO_CHANNEL_COUNT_MODE = 1;
+pub const WEBAUDIO_CHANNEL_COUNT_MODE_WEBAUDIO_CHANNEL_COUNT_MODE_EXPLICIT:
+    WEBAUDIO_CHANNEL_COUNT_MODE = 2;
+pub type WEBAUDIO_CHANNEL_COUNT_MODE = ::std::os::raw::c_uint;
+pub const WEBAUDIO_CHANNEL_INTERPRETATION_WEBAUDIO_CHANNEL_INTERPRETATION_SPEAKERS:
+    WEBAUDIO_CHANNEL_INTERPRETATION = 0;
+pub const WEBAUDIO_CHANNEL_INTERPRETATION_WEBAUDIO_CHANNEL_INTERPRETATION_DISCRETE:
+    WEBAUDIO_CHANNEL_INTERPRETATION = 1;
+pub type WEBAUDIO_CHANNEL_INTERPRETATION = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct EmscriptenAudioWorkletNodeCreateOptions {
     pub numberOfInputs: ::std::os::raw::c_int,
     pub numberOfOutputs: ::std::os::raw::c_int,
     pub outputChannelCounts: *mut ::std::os::raw::c_int,
+    pub channelCount: ::std::os::raw::c_ulong,
+    pub channelCountMode: WEBAUDIO_CHANNEL_COUNT_MODE,
+    pub channelInterpretation: WEBAUDIO_CHANNEL_INTERPRETATION,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of EmscriptenAudioWorkletNodeCreateOptions"]
-        [::std::mem::size_of::<EmscriptenAudioWorkletNodeCreateOptions>() - 12usize];
+        [::std::mem::size_of::<EmscriptenAudioWorkletNodeCreateOptions>() - 24usize];
     ["Alignment of EmscriptenAudioWorkletNodeCreateOptions"]
         [::std::mem::align_of::<EmscriptenAudioWorkletNodeCreateOptions>() - 4usize];
     ["Offset of field: EmscriptenAudioWorkletNodeCreateOptions::numberOfInputs"]
@@ -4500,6 +4248,17 @@ const _: () = {
         EmscriptenAudioWorkletNodeCreateOptions,
         outputChannelCounts
     ) - 8usize];
+    ["Offset of field: EmscriptenAudioWorkletNodeCreateOptions::channelCount"]
+        [::std::mem::offset_of!(EmscriptenAudioWorkletNodeCreateOptions, channelCount) - 12usize];
+    ["Offset of field: EmscriptenAudioWorkletNodeCreateOptions::channelCountMode"][::std::mem::offset_of!(
+        EmscriptenAudioWorkletNodeCreateOptions,
+        channelCountMode
+    ) - 16usize];
+    ["Offset of field: EmscriptenAudioWorkletNodeCreateOptions::channelInterpretation"][::std::mem::offset_of!(
+        EmscriptenAudioWorkletNodeCreateOptions,
+        channelInterpretation
+    )
+        - 20usize];
 };
 impl Default for EmscriptenAudioWorkletNodeCreateOptions {
     fn default() -> Self {
@@ -4517,7 +4276,7 @@ unsafe extern "C" {
         options: *const EmscriptenAudioWorkletNodeCreateOptions,
         processCallback: EmscriptenWorkletNodeProcessCallback,
         userData4: *mut ::std::os::raw::c_void,
-    ) -> EMSCRIPTEN_AUDIO_WORKLET_NODE_T;
+    ) -> EMSCRIPTEN_WEBAUDIO_T;
 }
 unsafe extern "C" {
     pub fn emscripten_audio_node_connect(
